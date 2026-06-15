@@ -4,7 +4,13 @@ const cors = require('cors');
 const OpenAI = require('openai');
 const app = express();
 
-app.use(cors({ origin: '*' }));
+// ДОЗВОЛЯЄМО ВСІМ - це вбиває помилку CORS назавжди
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 const client = new OpenAI({
