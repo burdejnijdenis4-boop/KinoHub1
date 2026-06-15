@@ -5,6 +5,7 @@ const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNG
 const USERS_BIN_ID = '6a2da741da38895dfebb4bcf';  
 const MOVIES_BIN_ID = '6a24577af5f4af5e29c32cf6';
 const COMMENTS_BIN_ID = '6a2f2a5ef5f4af5e29f1fa87'; 
+let filteredMovies = []; // Це твоя "коробка", в яку ми кладемо результат
 
 // Функція для отримання даних користувачів з хмари
 async function loadUsersFromCloud() {
@@ -403,46 +404,45 @@ filterPills.forEach(pill => {
 });
 
 function applyAllFilters() {
-function applyAllFilters() {
-    // Перевірка, чи дані завантажені
-    if (typeof moviesDatabase === 'undefined' || moviesDatabase.length === 0) {
+    // Якщо база ще не завантажена, нічого не робимо
+    if (typeof moviesDatabase === 'undefined' || !moviesDatabase) {
+        console.log("База ще не завантажена");
         return; 
     }
     
     let filtered = [...moviesDatabase];
     
-    // Пошук фільтра
+    // Знаходимо активний фільтр
     const activePill = document.querySelector('.filter-pill.selected, .filter-tab.selected, .status-circle.selected');
     const value = activePill ? activePill.innerText.trim() : "Всі";
 
-    // Логіка фільтрації
-    try {
-        if (value === "Новинки") {
-            filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
-        } else if (value === "За рейтингом ★") {
-            filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
-        } else if (value !== "Всі" && value !== "Популярні") { 
-            filtered = filtered.filter(m => {
-                if (!m) return false;
-                const inGenre = m.genre && m.genre.toLowerCase().includes(value.toLowerCase());
-                const inTitle = m.title && m.title.toLowerCase().includes(value.toLowerCase());
-                const inYear = m.year == parseInt(value);
-                return inGenre || inTitle || inYear;
-            });
-        }
-    } catch (e) {
-        console.error("Помилка при фільтрації:", e);
+    // Логіка сортування та фільтрації
+    if (value === "Новинки") {
+        filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
+    } else if (value === "За рейтингом ★") {
+        filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+    } else if (value !== "Всі" && value !== "Популярні") { 
+        filtered = filtered.filter(m => {
+            if (!m) return false;
+            const inGenre = m.genre && m.genre.toLowerCase().includes(value.toLowerCase());
+            const inTitle = m.title && m.title.toLowerCase().includes(value.toLowerCase());
+            const inYear = m.year == parseInt(value);
+            return inGenre || inTitle || inYear;
+        });
     }
 
-    // Застосування результату
+    // ТУТ ВАЖЛИВО: присвоюємо результат у нашу глобальну змінну
     filteredMovies = filtered;
-    if (typeof currentPage !== 'undefined') currentPage = 1;
     
+    // Скидаємо сторінку
+    if (typeof currentPage !== 'undefined') currentPage = 1; 
+    
+    // Перемальовуємо
     if (typeof renderKinokradList === 'function') {
         renderKinokradList(); 
     }
 
-    // Скрол до результатів (без дублікатів!)
+    // Скрол
     const targetSection = document.querySelector('.news-section');
     if (targetSection) {
         targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
