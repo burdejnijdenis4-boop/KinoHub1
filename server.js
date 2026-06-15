@@ -1,18 +1,20 @@
-JavaScript
-const cors = require('cors');
-app.use(cors({
-  origin: 'https://kino-hub-seven.vercel.app', // Твоя адреса на Vercel
-  methods: ['GET', 'POST'],
-  credentials: true
-}));
-
 require('dotenv').config();
-const OpenAI = require('openai');
 const express = require('express');
+const cors = require('cors');
+const OpenAI = require('openai');
 const fs = require('fs');
 const path = require('path');
+
+// 1. СПОЧАТКУ створюємо app
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // Render вимагає process.env.PORT
+
+// 2. ПОТІМ налаштовуємо CORS (Дозволяємо запити з твого GitHub)
+app.use(cors({
+  origin: '*', // Зірочка означає "дозволити всім сайтам"
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Ініціалізація клієнта Groq
 const client = new OpenAI({
@@ -43,7 +45,6 @@ function readMarket() {
 function saveMarket(data) { fs.writeFileSync(MARKET_FILE, JSON.stringify(data, null, 2)); }
 
 // API АДМІН-ПАНЕЛІ
-
 app.get('/api/admin/movies', async (req, res) => {
     try {
         const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
@@ -165,12 +166,11 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-
 // --- Інші API ---
 app.post('/api/login', (req, res) => { res.json({ success: true, username: req.body.username }); });
 app.get('/api/profile', (req, res) => { res.json({ success: true, profile: {} }); });
 app.get('/api/market/items', (req, res) => { res.json(readMarket()); });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Сервер працює: http://localhost:${PORT}`);
+    console.log(`🚀 Сервер працює на порту ${PORT}`);
 });
