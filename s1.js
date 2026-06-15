@@ -218,7 +218,6 @@ async function toggleWatchLater(movieId, starElement) {
 // 6. ЗАВАНТАЖЕННЯ ФІЛЬМІВ З ХМАРИ ТА РЕНДЕР КАТАЛОГУ
 // ====================================================================
 let moviesDatabase = []; 
-let filteredMovies = []; 
 let currentPage = 1;
 const itemsPerPage = 4;  
 
@@ -521,9 +520,6 @@ async function sendMessage() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-        // =========================================================================================
-        // УВАГА! ТУТ ТРЕБА ВСТАВИТИ СВОЮ АДРЕСУ З RENDER, ЯКЩО ВОНА ВІДРІЗНЯЄТЬСЯ
-        // =========================================================================================
         const response = await fetch('https://kinohub1.onrender.com/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
