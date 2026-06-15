@@ -403,38 +403,51 @@ filterPills.forEach(pill => {
 });
 
 function applyAllFilters() {
-    // 1. ЗАХИСТ: Перевіряємо, чи є взагалі база фільмів
-    if (!moviesDatabase || moviesDatabase.length === 0) {
-        console.warn("Фільтрація: База фільмів ще не завантажена або порожня.");
-        // Можна додати alert, якщо хочеш повідомити користувача:
-        // alert("Зачекайте, каталог ще завантажується...");
+    // 1. БЕЗОПАСНАЯ ПРОВЕРКА (не ломает скрипт, если база ещё не загрузилась)
+    if (typeof moviesDatabase === 'undefined' || moviesDatabase.length === 0) {
         return; 
     }
     
-    let filtered = [...moviesDatabase]; // Беремо копію всієї бази
+    let filtered = [...moviesDatabase];
     
-    // 2. Отримуємо активну "пігулку" (фільтр)
-    const activePill = document.querySelector('.filter-pill.selected');
+    // 2. ПОИСК АКТИВНОГО ФИЛЬТРА (вернул твои старые надежные классы)
+    const activePill = document.querySelector('.filter-pill.selected, .filter-tab.selected, .status-circle.selected');
     const value = activePill ? activePill.innerText.trim() : "Всі";
 
-    console.log("Застосовую фільтр:", value); // Лог для перевірки в консолі
-
-    // 3. Логіка фільтрації
-    if (value === "Новинки") {
-        // Сортуємо від найновіших до найстаріших
-        filtered.sort((a, b) => parseInt(b.year) - parseInt(a.year));
-    } else if (value === "За рейтингом ★") {
-        // Сортуємо від найвищого рейтингу до найнижчого
-        filtered.sort((a, b) => parseFloat(b.rating || 0) - parseFloat(a.rating || 0));
-    } else if (value !== "Всі" && value !== "Популярні") { // Якщо це жанр
-        // Фільтруємо за жанром
-        filtered = filtered.filter(m => {
-            if (!m.genre) return false;
-            // Розбиваємо жанри фільму (якщо їх кілька через кому) і перевіряємо
-            const genres = m.genre.toLowerCase().split(',').map(g => g.trim());
-            return genres.includes(value.toLowerCase());
-        });
+    // 3. ЛОГИКА ФИЛЬТРАЦИИ С ЗАЩИТОЙ (try-catch)
+    try {
+        if (value === "Новинки") {
+            filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
+        } else if (value === "За рейтингом ★") {
+            filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+        } else if (value !== "Всі" && value !== "Популярні") { 
+            // Ищем совпадения по жанру, названию или году
+            filtered = filtered.filter(m => {
+                if (!m) return false;
+                const inGenre = m.genre && m.genre.toLowerCase().includes(value.toLowerCase());
+                const inTitle = m.title && m.title.toLowerCase().includes(value.toLowerCase());
+                const inYear = m.year == parseInt(value);
+                
+                return inGenre || inTitle || inYear;
+            });
+        }
+    } catch (e) {
+        console.error("Ошибка при фильтрации:", e);
     }
+
+    // 4. ПРИМЕНЕНИЕ И ОТРИСОВКА
+    filteredMovies = filtered;
+    
+    // Сбрасываем пагинацию на первую страницу
+    if (typeof currentPage !== 'undefined') {
+        currentPage = 1; 
+    }
+    
+    // Отрисовываем фильмы на экране
+    if (typeof renderKinokradList === 'function') {
+        renderKinokradList(); 
+    }
+}
 
     // 4. Оновлюємо глобальний масив та перемальовуємо
     filteredMovies = filtered;
