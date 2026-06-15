@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин Аватарок</title>
+    <link rel="stylesheet" href="s1.css">
+    <style>
+        /* Спільні стилі для всіх CSS-аватарок */
+        .avatar-solid, .avatar-gradient, .avatar-flag {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            display: flex; align-items: center; justify-content: center;
+            box-sizing: border-box;
+            overflow: hidden; /* Обрізає прапори по колу */
+        }
+        
+        /* 1 РЯД: Суцільні кольори */
+        .avatar-solid {
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        /* 2 РЯД: Градієнти */
+        .avatar-gradient {
+            border: 4px solid #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* 3 РЯД: Прапори (Векторні SVG) */
+        .avatar-flag {
+            border: 3px solid #555;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .avatar-flag svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body class="shop-body">
+
+    <div class="currency-container">
+        <img src="завантаження.png" class="coin-icon">
+        <span id="balance">0</span>
+    </div>
+
+    <a href="index.html" class="back-link">← Повернутися до кінотеатру</a>
+
+    <div class="shop-container">
+        <h1>Marketplace: Avatars</h1>
+        
+        <div class="shop-grid">
+            
+            <div class="avatar-item">
+                <div class="main-av avatar-solid" data-avatar="#2ecc71" style="background: #2ecc71;"></div>
+                <span class="price">5 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('#2ecc71', 5, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-solid" data-avatar="#3498db" style="background: #3498db;"></div>
+                <span class="price">5 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('#3498db', 5, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-solid" data-avatar="#e74c3c" style="background: #e74c3c;"></div>
+                <span class="price">5 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('#e74c3c', 5, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-solid" data-avatar="#9b59b6" style="background: #9b59b6;"></div>
+                <span class="price">5 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('#9b59b6', 5, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-solid" data-avatar="#f1c40f" style="background: #f1c40f;"></div>
+                <span class="price">5 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('#f1c40f', 5, this)">Buy</button>
+            </div>
+
+            <div class="avatar-item">
+                <div class="main-av avatar-gradient" data-avatar="linear-gradient(45deg, #ff9a9e, #fad0c4)" style="background: linear-gradient(45deg, #ff9a9e, #fad0c4);"></div>
+                <span class="price">20 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('linear-gradient(45deg, #ff9a9e, #fad0c4)', 20, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-gradient" data-avatar="linear-gradient(45deg, #a18cd1, #fbc2eb)" style="background: linear-gradient(45deg, #a18cd1, #fbc2eb);"></div>
+                <span class="price">20 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('linear-gradient(45deg, #a18cd1, #fbc2eb)', 20, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-gradient" data-avatar="linear-gradient(45deg, #84fab0, #8fd3f4)" style="background: linear-gradient(45deg, #84fab0, #8fd3f4);"></div>
+                <span class="price">20 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('linear-gradient(45deg, #84fab0, #8fd3f4)', 20, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-gradient" data-avatar="linear-gradient(45deg, #f093fb, #f5576c)" style="background: linear-gradient(45deg, #f093fb, #f5576c);"></div>
+                <span class="price">20 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('linear-gradient(45deg, #f093fb, #f5576c)', 20, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-gradient" data-avatar="linear-gradient(45deg, #f6d365, #fda085)" style="background: linear-gradient(45deg, #f6d365, #fda085);"></div>
+                <span class="price">20 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('linear-gradient(45deg, #f6d365, #fda085)', 20, this)">Buy</button>
+            </div>
+            
+            <div class="avatar-item">
+                <div class="main-av avatar-flag" data-avatar="flag:ua">
+                    <svg viewBox="0 0 2 1" preserveAspectRatio="none"><rect width="2" height="0.5" fill="#0057B7"/><rect y="0.5" width="2" height="0.5" fill="#FFD700"/></svg>
+                </div>
+                <span class="price">50 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('flag:ua', 50, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-flag" data-avatar="flag:pl">
+                    <svg viewBox="0 0 2 1" preserveAspectRatio="none"><rect width="2" height="0.5" fill="#FFFFFF"/><rect y="0.5" width="2" height="0.5" fill="#DC143C"/></svg>
+                </div>
+                <span class="price">50 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('flag:pl', 50, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-flag" data-avatar="flag:cz">
+                    <svg viewBox="0 0 3 2" preserveAspectRatio="none"><rect width="3" height="1" fill="#FFFFFF"/><rect y="1" width="3" height="1" fill="#D7141A"/><polygon points="0,0 1.5,1 0,2" fill="#11457E"/></svg>
+                </div>
+                <span class="price">50 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('flag:cz', 50, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-flag" data-avatar="flag:ro">
+                    <svg viewBox="0 0 3 2" preserveAspectRatio="none"><rect width="1" height="2" fill="#002B7F"/><rect x="1" width="1" height="2" fill="#FCD116"/><rect x="2" width="1" height="2" fill="#CE1126"/></svg>
+                </div>
+                <span class="price">50 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('flag:ro', 50, this)">Buy</button>
+            </div>
+            <div class="avatar-item">
+                <div class="main-av avatar-flag" data-avatar="flag:md">
+                    <svg viewBox="0 0 3 2" preserveAspectRatio="none"><rect width="1" height="2" fill="#003da5"/><rect x="1" width="1" height="2" fill="#ffd100"/><rect x="2" width="1" height="2" fill="#c8102e"/><polygon points="1.4,0.7 1.6,0.7 1.5,1.2" fill="#8B4513"/><circle cx="1.5" cy="0.95" r="0.05" fill="#ffd100"/></svg>
+                </div>
+                <span class="price">50 <img src="завантаження.png" class="coin-img"></span>
+                <button class="buy-btn" onclick="handleAvatarAction('flag:md', 50, this)">Buy</button>
+            </div>
+
+        </div>
+    </div>
+    
+    <script src="s1.js"></script>
+    JavaScript
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const currentUser = sessionStorage.getItem('secureUser');
+        if (!currentUser) return;
+
+        const users = await loadUsersFromCloud();
+        const user = users[currentUser];
+        if (!user || !user.inventory) return;
+
+        // Перевіряємо кожну кнопку "Купити"
+        document.querySelectorAll('.buy-btn').forEach(btn => {
+            // Отримуємо ID аватара з onclick-атрибута (це трохи складно, але працює)
+            const onclickAttr = btn.getAttribute('onclick');
+            const avatarId = onclickAttr.split("'")[1]; 
+
+            const isOwned = user.inventory.some(item => item.id === avatarId);
+            if (isOwned) {
+                btn.innerText = "Вдягнути"; // Або "Вдягнено"
+                btn.style.background = "#28a745";
+                btn.onclick = () => {
+                    // Логіка простого вдягання без списання грошей
+                    user.avatar = btn.parentElement.querySelector('.main-av').innerHTML;
+                    saveUsersToCloud(users).then(() => alert("Аватарку змінено!"));
+                };
+            }
+        });
+    });
+</script>
+</body>
+</html>

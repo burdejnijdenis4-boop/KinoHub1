@@ -1,0 +1,282 @@
+[
+  {
+    "id": 1,
+    "name": "Шпалери: Неон",
+    "image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 2,
+    "name": "Шпалери: Градієнт",
+    "image": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 3,
+    "name": "Артефакт №3",
+    "image": "https://cdn-icons-png.flaticon.com/512/2933/2933116.png",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 4,
+    "name": "Артефакт №4",
+    "image": "https://cdn-icons-png.flaticon.com/512/817/817730.png",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 5,
+    "name": "Артефакт №5",
+    "image": "https://cdn-icons-png.flaticon.com/512/3176/3176294.png",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 6,
+    "name": "Артефакт №6",
+    "image": "https://cdn-icons-png.flaticon.com/512/7653/7653282.png",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 7,
+    "name": "Артефакт №7",
+    "image": "https://cdn-icons-png.flaticon.com/512/4062/4062941.png",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 8,
+    "name": "Артефакт №8",
+    "image": "https://cdn-icons-png.flaticon.com/512/2933/2933116.png",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 9,
+    "name": "Артефакт №9",
+    "image": "https://cdn-icons-png.flaticon.com/512/817/817730.png",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 10,
+    "name": "Артефакт №10",
+    "image": "https://cdn-icons-png.flaticon.com/512/3176/3176294.png",
+    "rarityInfo": {
+      "name": "Звичайний",
+      "color": "#bdc3c7",
+      "maxSupply": 2000
+    },
+    "systemPrice": 500,
+    "totalSupply": 2000,
+    "remainingSupply": 2000,
+    "listings": []
+  },
+  {
+    "id": 11,
+    "name": "Артефакт №11",
+    "image": "https://cdn-icons-png.flaticon.com/512/7653/7653282.png",
+    "rarityInfo": {
+      "name": "Рідкісний",
+      "color": "#4a90e2",
+      "maxSupply": 1000
+    },
+    "systemPrice": 1000,
+    "totalSupply": 1000,
+    "remainingSupply": 1000,
+    "listings": []
+  },
+  {
+    "id": 12,
+    "name": "Артефакт №12",
+    "image": "https://cdn-icons-png.flaticon.com/512/4062/4062941.png",
+    "rarityInfo": {
+      "name": "Рідкісний",
+      "color": "#4a90e2",
+      "maxSupply": 1000
+    },
+    "systemPrice": 1000,
+    "totalSupply": 1000,
+    "remainingSupply": 1000,
+    "listings": []
+  },
+  {
+    "id": 13,
+    "name": "Артефакт №13",
+    "image": "https://cdn-icons-png.flaticon.com/512/2933/2933116.png",
+    "rarityInfo": {
+      "name": "Рідкісний",
+      "color": "#4a90e2",
+      "maxSupply": 1000
+    },
+    "systemPrice": 1000,
+    "totalSupply": 1000,
+    "remainingSupply": 1000,
+    "listings": []
+  },
+  {
+    "id": 14,
+    "name": "Артефакт №14",
+    "image": "https://cdn-icons-png.flaticon.com/512/817/817730.png",
+    "rarityInfo": {
+      "name": "Рідкісний",
+      "color": "#4a90e2",
+      "maxSupply": 1000
+    },
+    "systemPrice": 1000,
+    "totalSupply": 1000,
+    "remainingSupply": 1000,
+    "listings": []
+  },
+  {
+    "id": 15,
+    "name": "Артефакт №15",
+    "image": "https://cdn-icons-png.flaticon.com/512/3176/3176294.png",
+    "rarityInfo": {
+      "name": "Рідкісний",
+      "color": "#4a90e2",
+      "maxSupply": 1000
+    },
+    "systemPrice": 1000,
+    "totalSupply": 1000,
+    "remainingSupply": 1000,
+    "listings": []
+  },
+  {
+    "id": 16,
+    "name": "Артефакт №16",
+    "image": "https://cdn-icons-png.flaticon.com/512/7653/7653282.png",
+    "rarityInfo": {
+      "name": "Епічний",
+      "color": "#9b59b6",
+      "maxSupply": 500
+    },
+    "systemPrice": 1500,
+    "totalSupply": 500,
+    "remainingSupply": 500,
+    "listings": []
+  },
+  {
+    "id": 17,
+    "name": "Артефакт №17",
+    "image": "https://cdn-icons-png.flaticon.com/512/4062/4062941.png",
+    "rarityInfo": {
+      "name": "Епічний",
+      "color": "#9b59b6",
+      "maxSupply": 500
+    },
+    "systemPrice": 1500,
+    "totalSupply": 500,
+    "remainingSupply": 500,
+    "listings": []
+  },
+  {
+    "id": 18,
+    "name": "Артефакт №18",
+    "image": "https://cdn-icons-png.flaticon.com/512/2933/2933116.png",
+    "rarityInfo": {
+      "name": "Епічний",
+      "color": "#9b59b6",
+      "maxSupply": 500
+    },
+    "systemPrice": 1500,
+    "totalSupply": 500,
+    "remainingSupply": 500,
+    "listings": []
+  },
+  {
+    "id": 19,
+    "name": "Артефакт №19",
+    "image": "https://cdn-icons-png.flaticon.com/512/817/817730.png",
+    "rarityInfo": {
+      "name": "Легендарний",
+      "color": "#ffd700",
+      "maxSupply": 50
+    },
+    "systemPrice": 2000,
+    "totalSupply": 50,
+    "remainingSupply": 50,
+    "listings": []
+  },
+  {
+    "id": 20,
+    "name": "Артефакт №20",
+    "image": "https://cdn-icons-png.flaticon.com/512/3176/3176294.png",
+    "rarityInfo": {
+      "name": "Легендарний",
+      "color": "#ffd700",
+      "maxSupply": 50
+    },
+    "systemPrice": 2000,
+    "totalSupply": 50,
+    "remainingSupply": 50,
+    "listings": []
+  }
+]

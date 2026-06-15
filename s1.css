@@ -1,0 +1,1021 @@
+/* =========================================
+   ЧАСТИНА 1: БАЗОВІ СТИЛІ ТА КАРУСЕЛЬ
+   ========================================= */
+
+body {
+    background: url('https://wallpapercave.com/wp/wp12635906.jpg') no-repeat center center / cover;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    overflow-x: hidden;
+    position: relative; /* Додай це */
+    padding-bottom: 80px; /* І це (відступ для футера) */
+}
+
+.avatar-wrapper {
+        width: 35px; /* Зробив трохи меншим для телефонів */
+        height: 35px;
+    }
+
+/* --- ВЕРХНІ БЛОКИ (Баланс і Профіль) --- */
+.currency-container {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1000;
+}
+.currency-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.coin-icon { width: 25px; height: 25px; }
+#balance { color: #ffd700; font-weight: bold; font-size: 1.2rem; }
+#premium-balance { color: #4a90e2; font-weight: bold; font-size: 1.2rem; }
+
+.profile-section {
+    position: fixed;
+    left: 40px;
+    top: 40px !important;
+    z-index: 1000;
+}
+.profile-link { text-decoration: none; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+/* Змінюємо розмір обгортки на менший */
+.avatar-wrapper { position: relative; width: 50px; height: 50px; } 
+/* Стилі самого аватара залишаємо майже такими ж, але вони тепер впишуться в 50x50 */
+#user-avatar { width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); object-fit: cover; }
+.edit-badge { position: absolute; bottom: 0; right: 0; background: #4a90e2; width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; }
+
+/* --- НОВЕ БОКОВЕ МЕНЮ (Замість кружків) --- */
+.status-circles {
+    position: fixed;
+    left: 40px !important;
+    top: 170px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 1000;
+}
+
+/* Стиль нових кнопок (як твоя кнопка "Назад") */
+.sidebar-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Розсовує текст і повзунок по краях */
+    width: 160px; /* Однаковий розмір для всіх */
+    padding: 10px 15px;
+    background-color: #1a2233;
+    border: 1px solid #4a90e2;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    cursor: pointer;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Ефект наведення (як ти просив) */
+.sidebar-menu-btn:hover {
+    background-color: #1a2233;
+    color: #ffd700;
+    border-color: #ffd700;
+    transform: translateY(-2px);
+}
+
+/* --- СТИЛІ ПОВЗУНКА --- */
+.toggle-switch {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.2); /* Вимкнений стан (сірий) */
+    border-radius: 20px;
+    transition: 0.3s ease;
+}
+
+/* Кружечок всередині повзунка */
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s ease;
+}
+
+/* Активний стан повзунка (УВІМКНЕНО) */
+.sidebar-menu-btn.active-toggle .toggle-switch {
+    background-color: #4a90e2; /* Синій фон */
+}
+
+.sidebar-menu-btn.active-toggle .toggle-switch::after {
+    transform: translateX(16px); /* Кружечок їде вправо */
+    background-color: #ffd700;   /* Кружечок стає жовтим */
+}
+
+/* Жовтий повзунок при наведенні на увімкнену кнопку */
+.sidebar-menu-btn:hover.active-toggle .toggle-switch {
+    background-color: #ffd700;
+}
+.sidebar-menu-btn:hover.active-toggle .toggle-switch::after {
+    background-color: #1a2233;
+}
+
+/* --- ЧАТ --- */
+.chat-sidebar {
+    position: fixed;
+    left: 40px !important;
+    top: 380px !important;
+    width: 280px;
+    height: 400px;
+    background: rgba(10, 15, 30, 0.85);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    z-index: 900;
+    transition: box-shadow 0.3s, border-color 0.3s; 
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    user-select: none;
+}
+
+.chat-title { 
+    color: #ffd700; 
+    margin: 0 !important; 
+    font-size: 16px; 
+    text-align: left;
+    flex-grow: 1;
+}
+
+/* --- СТИЛІ КНОПОК У ШАПЦІ ЧАТУ --- */
+.header-icon-btn {
+    background: rgba(0, 0, 0, 0.4); 
+    border: 1px solid rgba(255, 255, 255, 0.05); 
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 6px 10px; 
+    border-radius: 8px; 
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-icon-btn:hover {
+    background: rgba(142, 68, 173, 0.6); 
+    border-color: rgba(142, 68, 173, 0.8);
+    transform: translateY(-2px); 
+}
+
+.header-icon-btn.active {
+    background: rgba(142, 68, 173, 0.9); 
+    border-color: #9b59b6;
+    box-shadow: 0 0 12px rgba(142, 68, 173, 0.6); 
+}
+
+.chat-sidebar.unpinned #pin-chat-btn {
+    background: rgba(142, 68, 173, 0.9);
+    border-color: #9b59b6;
+    box-shadow: 0 0 12px rgba(142, 68, 173, 0.6);
+}
+
+.header-icon-btn:active {
+    transform: scale(0.95);
+}
+
+.chat-sidebar.unpinned {
+    border-color: rgba(74, 144, 226, 0.4) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(74, 144, 226, 0.2) !important;
+}
+.chat-sidebar.unpinned .chat-header {
+    cursor: move;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bot-message, .user-message {
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+.bot-message { background: rgba(74, 144, 226, 0.2); border-left: 3px solid #4a90e2; color: #fff; }
+.user-message { background: rgba(255, 255, 255, 0.1); text-align: right; color: #eee; }
+
+.chat-input-area { display: flex; gap: 5px; }
+#chat-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 8px;
+    color: white;
+}
+#send-btn {
+    background: #4a90e2;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    padding: 0 12px;
+}
+
+/* --- ФІЛЬТРИ --- */
+.genre-sidebar {
+    position: fixed;
+    top: 250px;
+    right: 40px;
+    width: 280px;
+    max-height: 500px;
+    background: rgba(10, 15, 30, 0.85);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 900;
+    overflow-y: auto;
+}
+.genre-sidebar::-webkit-scrollbar { width: 6px; }
+.genre-sidebar::-webkit-scrollbar-thumb { background: #4a90e2; border-radius: 10px; }
+
+.genre-title {
+    margin: 0;
+    color: #ffd700;
+    text-align: center;
+    font-size: 22px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 15px;
+}
+
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+.filter-subtitle {
+    margin: 0;
+    color: #aaa;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pill-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ddd;
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+.filter-pill:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.4); color: #fff; }
+.filter-pill:active { transform: scale(0.9); }
+.filter-pill.selected {
+    background: #4a90e2;
+    border-color: #4a90e2;
+    color: white;
+    box-shadow: 0 0 12px rgba(74, 144, 226, 0.5);
+}
+
+.apply-filters-btn {
+    width: 100%;
+    background: linear-gradient(45deg, #4a90e2, #6ab0ff);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+.apply-filters-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74, 144, 226, 0.5); }
+.apply-filters-btn:active { transform: scale(0.95); }
+
+/* --- ГОЛОВНИЙ КОНТЕЙНЕР КАРУСЕЛІ ТА НОВИН --- */
+.movie-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+/* --- КАРУСЕЛЬ --- */
+.movie-carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    width: 100%;
+    position: relative;
+}
+.movie-card {
+    display: none;
+    width: 150px;
+    transition: all 0.5s ease-in-out;
+    position: absolute;
+    cursor: pointer;
+}
+.movie-card img {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 2px solid transparent;
+}
+.movie-card.far-left, .movie-card.mid-left, .movie-card.active, .movie-card.mid-right, .movie-card.far-right { display: block; }
+
+.movie-card.far-left { transform: translateX(-250px) translateY(50px) scale(0.7); z-index: 1; opacity: 0.4; }
+.movie-card.mid-left { transform: translateX(-125px) translateY(15px) scale(0.9); z-index: 2; opacity: 0.8; }
+.movie-card.active { transform: translateX(0) translateY(-20px) scale(1.2); z-index: 3; opacity: 1; }
+.movie-card.active img { border-color: #4a90e2; box-shadow: 0 15px 40px rgba(74, 144, 226, 0.5); }
+.movie-card.mid-right { transform: translateX(125px) translateY(15px) scale(0.9); z-index: 2; opacity: 0.8; }
+.movie-card.far-right { transform: translateX(250px) translateY(50px) scale(0.7); z-index: 1; opacity: 0.4; }
+
+/* --- КНОПКИ КАРУСЕЛІ --- */
+.nav-btn {
+    position: absolute;
+    top: 150px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    z-index: 100;
+    transition: 0.3s;
+}
+.nav-btn:hover { background: #4a90e2; }
+.prev { left: -50px; }
+.next { right: -50px; }
+
+/* --- БЛОК З ОПИСОМ ФІЛЬМУ ТА СПИСКОМ --- */
+.movie-details {
+    margin-top: 20px;
+    text-align: center;
+    background: rgba(10, 15, 30, 0.8);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 100%;
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+}
+.news-section { width: 100%; padding-bottom: 20px; }
+.section-title {
+    color: #ffd700;
+    font-size: 24px;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+.movie-list { display: flex; flex-direction: column; gap: 20px; }
+.kinokrad-card {
+    background: rgba(20, 25, 40, 0.85); /* Темненький напівпрозорий фон під стиль сайту */
+    color: #ffffff; /* Робимо текст світлим за замовчуванням */
+    border-radius: 15px;
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Тонка ледь помітна початкова рамка */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+}
+
+.kinokrad-card:hover { 
+    transform: translateY(-5px); 
+    border-color: #ffd700; /* Тонка яскраво-жовта рамка при наведенні */
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2); /* Легке жовтувате світіння */
+}
+
+.kinokrad-poster { width: 180px; height: 250px; border-radius: 8px; object-fit: cover; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); }
+.kinokrad-info { flex: 1; text-align: left; }
+.kinokrad-info h3 { margin: 0 0 10px 0; color: #e67e22; font-size: 20px; }
+.kinokrad-meta { font-size: 14px; line-height: 1.6; margin-bottom: 10px; }
+
+.kinokrad-meta b { 
+    color: #aaa; /* Робимо назви полів (Рік, Жанр тощо) світло-сірими */
+    width: 100px; 
+    display: inline-block; 
+}
+
+.kinokrad-desc {
+    font-size: 14px; 
+    color: #ccc; /* Робимо опис фільму світлим */
+    line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
+.stars { color: #f1c40f; margin: 5px 0; }
+
+/* --- ПАГІНАЦІЯ --- */
+.pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 30px; }
+.page-btn {
+    background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 40px; height: 40px; padding: 0 10px; border-radius: 8px;
+    font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
+    display: flex; justify-content: center; align-items: center;
+}
+.page-btn:hover:not(:disabled) { background: #4a90e2; border-color: #4a90e2; }
+.page-btn.active { background: #4a90e2; border-color: #4a90e2; box-shadow: 0 0 12px rgba(74, 144, 226, 0.6); }
+.page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* --- МОДАЛЬНІ ВІКНА --- */
+.modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); z-index: 2000;
+    justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease;
+}
+.modal.show { display: flex; opacity: 1; }
+.modal-content {
+    background: rgba(15, 20, 35, 0.95); padding: 40px; border-radius: 20px;
+    border: 1px solid rgba(74, 144, 226, 0.3); width: 350px; text-align: center;
+    position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateY(-20px); transition: transform 0.3s ease;
+}
+.modal.show .modal-content { transform: translateY(0); }
+.close-btn { position: absolute; top: 10px; right: 20px; font-size: 28px; cursor: pointer; color: #aaa; transition: 0.3s; }
+.close-btn:hover { color: #ff4d4d; }
+
+/* =========================================
+   ЧАСТИНА 2: МАГАЗИН АВАТАРОК 
+   ========================================= */
+.shop-body { overflow-y: auto; align-items: flex-start; padding-top: 80px; }
+.back-link { position: absolute; top: 20px; left: 40px; color: white; text-decoration: none; font-size: 16px; background: rgba(255, 255, 255, 0.1); padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); transition: 0.3s; z-index: 1000; }
+.back-link:hover { background: #4a90e2; }
+.shop-container { background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(15px); border-radius: 20px; padding: 40px; width: 90%; max-width: 1000px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 40px; text-align: center; box-sizing: border-box;}
+.shop-container h1 { margin-top: 0; margin-bottom: 30px; color: #4a90e2; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+.shop-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.avatar-item { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; width: 120px; display: flex; flex-direction: column; align-items: center; transition: transform 0.3s; }
+.avatar-item:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.main-av { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 2px solid transparent; }
+.price { display: flex; align-items: center; gap: 5px; font-weight: bold; margin-bottom: 15px; color: #ffd700; }
+.coin-img { width: 16px; height: 16px; }
+.buy-btn { background: #2d2e37; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+.buy-btn:hover { background: #4a90e2; }
+.avatar-item.owned .main-av { border-color: #4a90e2; }
+.avatar-item.owned .price { color: #4a90e2; }
+.avatar-item.owned .buy-btn { background: #4a90e2; }
+
+/* ==========================================================
+   НОВЕ: ДОДАТКОВІ СТИЛІ ДЛЯ СЕКЦІЇ КОМЕНТАРІВ (movie.html)
+   ========================================================== */
+.comments-section {
+    margin-top: 40px;
+    background: rgba(10, 15, 30, 0.85);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    width: 100%;
+    max-width: 1000px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.comments-title {
+    color: #e67e22;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    text-align: left;
+    border-bottom: 1px solid rgba(230, 126, 34, 0.3);
+    padding-bottom: 10px;
+}
+
+.comments-list {
+    margin-bottom: 25px;
+    max-height: 350px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 5px;
+}
+
+.comments-list::-webkit-scrollbar {
+    width: 6px;
+}
+.comments-list::-webkit-scrollbar-thumb {
+    background: #e67e22;
+    border-radius: 10px;
+}
+
+.comment-input-area {
+    display: flex;
+    gap: 12px;
+}
+
+#comment-input {
+    flex: 1;
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+#comment-input:focus {
+    outline: none;
+    border-color: #e67e22;
+}
+
+#submit-comment-btn {
+    padding: 0 25px;
+    background: linear-gradient(45deg, #e67e22, #f39c12);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#submit-comment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4);
+}
+
+#submit-comment-btn:active {
+    transform: scale(0.95);
+}
+
+/* ==========================================================
+   MOBILES & TABLETS ADAPTATION (Гнучка мобільна версія)
+   ========================================================== */
+@media (max-width: 850px) {
+    body {
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 90px 12px 30px 12px; 
+        height: auto;
+    }
+
+    .profile-section {
+        position: fixed !important;
+        top: 12px !important;
+        left: 12px !important;
+        z-index: 2001;
+    }
+    .profile-link {
+        flex-direction: row; 
+        gap: 8px;
+    }
+    .avatar-wrapper {
+        width: 45px;
+        height: 45px;
+    }
+    .username {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .currency-container {
+        position: fixed !important;
+        top: 15px !important;
+        right: 12px !important;
+        padding: 6px 12px;
+        gap: 10px;
+        background: rgba(5, 8, 20, 0.85);
+        backdrop-filter: blur(5px);
+        z-index: 2001;
+    }
+    .coin-icon {
+        width: 20px;
+        height: 20px;
+    }
+    #balance, #premium-balance {
+        font-size: 1rem;
+    }
+
+    .status-circles {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        flex-direction: row !important;
+        justify-content: center;
+        margin: 10px auto 20px auto;
+        gap: 15px;
+        z-index: 1000;
+    }
+    .status-circles .circle {
+        width: 45px !important;
+        height: 45px !important;
+    }
+
+    .movie-container {
+        margin-top: 0;
+        width: 100%;
+        padding: 0;
+    }
+    .movie-carousel {
+        height: 300px; 
+    }
+    .movie-card {
+        width: 110px; 
+    }
+    
+    .movie-card.far-left { transform: translateX(-110px) translateY(30px) scale(0.6); opacity: 0.15; z-index: 1;}
+    .movie-card.mid-left { transform: translateX(-65px) translateY(10px) scale(0.85); opacity: 0.6; z-index: 2;}
+    .movie-card.active { transform: translateX(0) translateY(-15px) scale(1.15); opacity: 1; z-index: 3;}
+    .movie-card.mid-right { transform: translateX(65px) translateY(10px) scale(0.85); opacity: 0.6; z-index: 2;}
+    .movie-card.far-right { transform: translateX(110px) translateY(30px) scale(0.6); opacity: 0.15; z-index: 1;}
+
+    .nav-btn {
+        top: 110px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.4rem;
+    }
+    .prev { left: -5px; }
+    .next { right: -5px; }
+
+    .movie-details {
+        padding: 15px;
+    }
+    .kinokrad-card {
+        flex-direction: column; 
+        align-items: center;
+        padding: 15px;
+        gap: 12px;
+        text-align: center;
+    }
+    .kinokrad-poster {
+        width: 100%;
+        max-width: 180px;
+        height: 240px;
+    }
+    .kinokrad-info {
+        text-align: center;
+    }
+    .kinokrad-info h3 {
+        font-size: 18px;
+    }
+    .kinokrad-meta {
+        font-size: 13px;
+        text-align: left;
+        display: inline-block;
+    }
+    .kinokrad-meta b {
+        width: auto;
+        display: inline;
+        margin-right: 5px;
+    }
+    .kinokrad-desc {
+        text-align: left;
+        font-size: 13px;
+        -webkit-line-clamp: 3;
+    }
+
+    .genre-sidebar {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        max-height: none !important;
+        margin: 25px 0 0 0;
+        box-sizing: border-box;
+    }
+    
+    .chat-sidebar {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        height: 350px !important;
+        margin: 25px 0 0 0;
+        box-sizing: border-box;
+    }
+
+    .shop-body {
+        padding-top: 85px;
+    }
+    .back-link {
+        position: fixed !important;
+        top: 15px;
+        left: 12px;
+        font-size: 13px;
+        padding: 8px 14px;
+        z-index: 2002;
+    }
+    .shop-container {
+        width: 100%;
+        padding: 20px 10px;
+    }
+    .shop-container h1 {
+        font-size: 24px;
+        margin-top: 10px;
+    }
+    .shop-grid {
+        gap: 10px;
+    }
+    .avatar-item {
+        width: calc(50% - 5px); 
+        padding: 15px 8px;
+    }
+    .main-av {
+        width: 65px;
+        height: 65px;
+    }
+    
+    .modal-content {
+        width: 85%;
+        padding: 25px;
+    }
+
+    .comment-input-area {
+        flex-direction: column;
+    }
+    #submit-comment-btn {
+        padding: 12px 0;
+    }
+}
+
+
+/* Максимально жорсткі стилі для аватара */
+.avatar-wrapper {
+    position: relative !important;
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    min-height: 60px !important;
+    overflow: visible !important; /* ВАЖЛИВО: змінив з hidden на visible, інакше твоє світіння просто обріжеться */
+    flex-shrink: 0 !important;
+}
+
+#user-avatar {
+    width: 60px !important;
+    height: 60px !important;
+    display: block !important;
+    object-fit: cover !important; 
+    border-radius: 50% !important;
+    
+    /* Додаємо золоту рамку та світіння */
+    border: 3px solid #ffd700 !important; 
+    padding: 3px !important; 
+    background: rgba(20, 25, 40, 0.5) !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Ефект при наведенні */
+#user-avatar:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6) !important;
+    transform: scale(1.03) !important;
+}
+
+
+
+/* =========================================
+   10. СВІТЛА ТЕМА (LIGHT THEME)
+   ========================================= */
+body.light-theme {
+    /* Твоя картинка для світлої теми: */
+    background: url('https://images.wallpaperscraft.ru/image/single/oblaka_nebo_den_172438_3840x2160.jpg') no-repeat center center / cover; 
+    color: #333;
+}
+
+/* Робимо всі напівпрозорі темні контейнери білими */
+body.light-theme .currency-container,
+body.light-theme .chat-sidebar,
+body.light-theme .genre-sidebar,
+body.light-theme .movie-details,
+body.light-theme .shop-container,
+body.light-theme .auth-card,
+body.light-theme .comments-section,
+body.light-theme .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+/* Бічні кнопки та шапка профілю */
+body.light-theme .sidebar-menu-btn {
+    background-color: #ffffff;
+    color: #333;
+    border-color: #ddd;
+}
+body.light-theme .sidebar-menu-btn:hover {
+    background-color: #f8f9fa;
+    border-color: #4a90e2;
+}
+
+/* Змінюємо кольори заголовків, бо жовтий на білому погано видно */
+body.light-theme .section-title,
+body.light-theme .genre-title,
+body.light-theme .chat-title,
+body.light-theme h2 {
+    color: #4a90e2; 
+    border-bottom-color: rgba(74, 144, 226, 0.3);
+}
+
+body.light-theme .filter-subtitle,
+body.light-theme .kinokrad-desc {
+    color: #666;
+}
+
+body.light-theme #balance {
+    color: #d35400; /* Темніший оранжевий для балансу */
+}
+
+/* Фільтри (Пігулки) */
+body.light-theme .filter-pill {
+    background: #f0f4f8;
+    border-color: #ddd;
+    color: #333;
+}
+body.light-theme .filter-pill:hover { background: #e2e8f0; }
+body.light-theme .filter-pill.selected { background: #4a90e2; color: white; }
+
+/* Чат-бот */
+body.light-theme #chat-input,
+body.light-theme #comment-input {
+    background: #f0f4f8;
+    border-color: #ddd;
+    color: #333;
+}
+body.light-theme .bot-message {
+    background: rgba(74, 144, 226, 0.15);
+    color: #333;
+}
+body.light-theme .user-message {
+    background: #f0f4f8;
+    color: #333;
+}
+
+
+/* --- Пагінація (номери сторінок) у світлій темі --- */
+body.light-theme .page-btn {
+    background: rgba(255, 255, 255, 0.8); /* Напівпрозорий білий фон кнопок */
+    color: #1a2233; /* Темний (чорно-синій) текст цифр */
+    border-color: #ccc; /* Світло-сіра рамочка */
+}
+
+/* Коли наводиш мишкою */
+body.light-theme .page-btn:hover:not(:disabled) {
+    background: #4a90e2; /* Синій фон */
+    color: #ffffff;      /* Білий текст */
+}
+
+/* Активна (поточна) сторінка */
+body.light-theme .page-btn.active {
+    background: #4a90e2;
+    color: #ffffff;
+    border-color: #4a90e2;
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.4);
+}
+
+/* Перефарбовуємо картки назад у світлі відтінки для світлої теми */
+body.light-theme .kinokrad-card {
+    background: #ffffff;
+    color: #333333;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .kinokrad-card:hover {
+    border-color: #4a90e2; /* Для світлої теми можна зробити синю рамку при наведенні */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+body.light-theme .kinokrad-meta b {
+    color: #555555;
+}
+
+body.light-theme .kinokrad-desc {
+    color: #666666;
+}
+
+/* Стилізація посилання на баланс */
+.currency-link {
+    text-decoration: none;
+    color: inherit; /* бере колір тексту від батьківського блоку */
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px; /* додаємо трохи простору навколо для зручності */
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+/* Ефект підсвітки при наведенні (опціонально) */
+.currency-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Створення лінії знизу */
+.currency-link::after {
+    content: '';
+    position: absolute;
+    left: 10%;
+    bottom: 2px; /* відступ лінії від тексту */
+    width: 80%;
+    height: 2px;
+    background-color: #ffd700; /* золотистий колір, підходить до монет */
+    transform: scaleX(0); /* лінія спочатку прихована */
+    transition: transform 0.3s ease;
+}
+
+/* Анімація лінії при наведенні */
+.currency-link:hover::after {
+    transform: scaleX(1); /* лінія розтягується */
+}
+
+/* --- СТИЛІ ФУТЕРА (ВИПРАВЛЕНІ) --- */
+footer {
+    position: absolute; /* Відриваємо футер від flex-сітки, щоб він не сунув фільми */
+    bottom: 0;          /* Притискаємо строго до низу */
+    left: 0;            /* Притискаємо до лівого краю */
+    width: 100%;        /* Розтягуємо на весь екран */
+    text-align: center;
+    padding: 20px 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+}
+
+/* Стилізація для світлої теми */
+body.light-theme footer {
+    background: #f0f4f8; 
+    color: #333333;      
+    border-top: 1px solid #ddd;
+}
+
+.footer-content p {
+    margin: 5px 0;
+    opacity: 0.8;
+}
+
+/* --- ОНОВЛЕННЯ КАРУСЕЛІ: РАМКИ ТА ПРОЗОРІСТЬ --- */
+
+/* 1. Робимо рамки яскраво-жовтими і додаємо легке стильне сяйво */
+.movie-card img {
+    border: 2px solid #ffd700 !important; /* Тонка жовта рамка */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 12px rgba(255, 215, 0, 0.4) !important; /* Додали м'яке жовте підсвічування */
+}
+
+/* 2. Виправляємо прозорість для лівих елементів (робимо їх яскравішими) */
+.movie-card.far-left { 
+    opacity: 0.75 !important; /* Було 0.4, тепер фільм добре видно */
+}
+.movie-card.mid-left { 
+    opacity: 0.95 !important; /* Було 0.8, тепер майже на сто відсотків видимий */
+}
+
+/* 3. Виправляємо прозорість для правих елементів */
+.movie-card.mid-right { 
+    opacity: 0.95 !important; /* Було 0.8 */
+}
+.movie-card.far-right { 
+    opacity: 0.75 !important; /* Було 0.4 */
+}
+

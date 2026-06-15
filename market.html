@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoHub - Маркетплейс</title>
+    <link rel="stylesheet" href="s1.css">
+    
+    <style>
+        /* Стилі специфічні для сторінки маркету */
+        body.shop-body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 100px; /* Відступ від шапки */
+        }
+
+        .market-board {
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 1000px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-left: 60px; /* Зсув від кнопок зліва */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .market-header-title {
+            color: #ffd700;
+            margin-top: 0;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .market-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .market-card:hover {
+            transform: translateY(-5px);
+            border-color: #4a90e2;
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.3);
+        }
+
+        .market-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+        }
+
+        .market-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: white;
+        }
+
+        .market-card .price {
+            color: #ffd700;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Універсальне модальне вікно покупки */
+        .buy-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 3000; justify-content: center; align-items: center;
+        }
+        .buy-modal.show { display: flex; }
+        .buy-modal-content {
+            background: #1a1e2d; border: 1px solid #4a90e2; border-radius: 15px;
+            padding: 30px; width: 350px; text-align: center; position: relative;
+        }
+        .buy-modal-close {
+            position: absolute; top: 10px; right: 15px; font-size: 24px; color: #aaa; cursor: pointer;
+        }
+        .buy-modal-close:hover { color: white; }
+        
+        .buy-btn-large {
+            background: linear-gradient(45deg, #4a90e2, #6ab0ff);
+            border: none; color: white; padding: 12px; width: 100%;
+            border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px;
+        }
+        .buy-btn-large:hover { box-shadow: 0 0 15px rgba(74, 144, 226, 0.5); }
+    </style>
+</head>
+<body class="shop-body">
+
+    <div class="currency-container">
+        <div class="currency-item">
+            <img src="завантаження.png" alt="coin" class="coin-icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1175/1175277.png'">
+            <span id="balance">0</span>
+        </div>
+        <div class="currency-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/795/795624.png" alt="ticket" class="coin-icon">
+            <span id="premium-balance">0</span>
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <a href="profile.html" class="profile-link">
+            <div class="avatar-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="User Avatar" id="user-avatar">
+                <div class="edit-badge">✎</div>
+            </div>
+            <span class="username" id="main-username">Завантаження...</span>
+        </a>
+    </div>
+
+    <div class="status-circles">
+        <div class="circle" onclick="window.location.href='index.html'" title="На головну">
+            <img src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Головна">
+        </div>
+        <div class="circle" data-target="modal-1" title="Налаштування">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Налаштування">
+        </div>
+        <div class="circle" id="open-chat-btn" title="Чат">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Чат">
+        </div>
+    </div>
+
+    <div class="market-board">
+        <h1 class="market-header-title">🛒 Маркет Предметів</h1>
+        <div class="market-grid" id="market-grid"></div>
+    </div>
+
+    <div id="item-modal" class="buy-modal">
+        <div class="buy-modal-content">
+            <span class="buy-modal-close" onclick="closeModal()">&times;</span>
+            <img id="modal-img" src="" style="width: 120px; height: 120px; object-fit: contain; margin-bottom: 15px;">
+            <h2 id="modal-title" style="margin: 0 0 10px 0;">Назва</h2>
+            
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid rgba(255,255,255,0.1);">
+                <p style="margin: 0 0 10px 0; color: #aaa; font-size: 14px;">Залишилось на сервері: <b id="modal-supply" style="color: white;">0</b> шт.</p>
+                <div style="font-size: 24px; color: #ffd700; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1175/1175277.png" style="width: 24px; height: 24px;">
+                    <span id="modal-price">0</span>
+                </div>
+            </div>
+            
+            <button class="buy-btn-large" onclick="buyItem()">Придбати</button>
+        </div>
+    </div>
+
+    <script src="s1.js"></script>
+    <script>
+        // Перевірка авторизації
+        const currentUser = sessionStorage.getItem('secureUser');
+        if (!currentUser) window.location.href = 'auth.html';
+
+        let activeItem = null;
+
+        // Генерація 20 пустих предметів
+        const fakeItems = [];
+        for(let i = 1; i <= 20; i++) {
+            fakeItems.push({
+                id: i,
+                name: `Секретний Предмет #${i}`,
+                price: i * 150,
+                supply: 2000,
+                image: "https://cdn-icons-png.flaticon.com/512/817/817730.png"
+            });
+        }
+
+        // Завантаження даних профілю для шапки
+        async function loadProfileData() {
+            try {
+                const res = await fetch(`/api/profile?username=${currentUser}`);
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('main-username').innerText = currentUser;
+                    document.getElementById('balance').innerText = data.profile.balance.toLocaleString();
+                    document.getElementById('user-avatar').src = data.profile.avatar || "https://cdn-icons-png.flaticon.com/512/1144/1144760.png";
+                }
+            } catch (err) {
+                console.error("Помилка завантаження профілю. Перевірте роботу server.js");
+                document.getElementById('main-username').innerText = currentUser;
+            }
+        }
+
+        // Відображення 20 карток на екрані
+        function renderMarket() {
+            const grid = document.getElementById('market-grid');
+            grid.innerHTML = fakeItems.map(item => `
+                <div class="market-card" onclick="openModal(${item.id})">
+                    <img src="${item.image}">
+                    <h4>${item.name}</h4>
+                    <div class="price">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1175/1175277.png" style="width: 16px;">
+                        ${item.price}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Відкриття модалки
+        function openModal(id) {
+            activeItem = fakeItems.find(i => i.id === id);
+            document.getElementById('modal-img').src = activeItem.image;
+            document.getElementById('modal-title').innerText = activeItem.name;
+            document.getElementById('modal-supply').innerText = activeItem.supply;
+            document.getElementById('modal-price').innerText = activeItem.price;
+            
+            document.getElementById('item-modal').classList.add('show');
+        }
+
+        // Закриття модалки
+        function closeModal() {
+            document.getElementById('item-modal').classList.remove('show');
+            activeItem = null;
+        }
+
+        // Логіка покупки предмета
+        async function buyItem() {
+            if (!activeItem) return;
+
+            try {
+                // Відправляємо запит на сервер для покупки
+                const res = await fetch('/api/market/buy-system', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser, itemId: activeItem.id })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert(`✅ Ви успішно купили "${activeItem.name}"!\nПредмет додано у ваш інвентар (в Профілі).`);
+                    activeItem.supply -= 1; // Зменшуємо кількість візуально
+                    closeModal();
+                    loadProfileData(); // Оновлюємо баланс у шапці
+                } else {
+                    alert(`❌ Помилка: ${data.message || "У вас недостатньо монет або сталася помилка на сервері."}`);
+                }
+            } catch (err) {
+                // Якщо сервер не підключено, показуємо візуальну імітацію
+                alert(`⚠️ Сервер не відповідає.\n(Візуальна імітація): Ви ніби купили "${activeItem.name}".`);
+                activeItem.supply -= 1;
+                closeModal();
+                openModal(activeItem.id); // Щоб оновити циферку залишку
+            }
+        }
+
+        // Запуск
+        loadProfileData();
+        renderMarket();
+    </script>
+</body>
+</html>
