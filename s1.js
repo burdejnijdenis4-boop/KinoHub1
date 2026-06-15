@@ -461,7 +461,6 @@ function applyAllFilters() {
     if (newsSection) {
         newsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-}
 
     // 4. Оновлюємо глобальний масив та перемальовуємо
     filteredMovies = filtered;
@@ -475,7 +474,6 @@ function applyAllFilters() {
     if (newsSection) {
         newsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-}
 
 // ====================================================================
 // 9. AI ЧАТ-БОТ 
