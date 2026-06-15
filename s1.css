@@ -376,12 +376,11 @@ body {
 .movie-card.mid-right { transform: translateX(125px) translateY(15px) scale(0.9); z-index: 2; opacity: 0.8; }
 .movie-card.far-right { transform: translateX(250px) translateY(50px) scale(0.7); z-index: 1; opacity: 0.4; }
 
-/* --- КНОПКИ КАРУСЕЛІ --- */
 .nav-btn {
     position: absolute;
     top: 150px;
     background: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: white;І
     font-size: 2rem;
     width: 50px;
     height: 50px;
@@ -782,13 +781,13 @@ body {
 
 /* Максимально жорсткі стилі для аватара */
 .avatar-wrapper {
-    position: relative !important;
     width: 60px !important;
     height: 60px !important;
-    min-width: 60px !important;
-    min-height: 60px !important;
-    overflow: visible !important; /* ВАЖЛИВО: змінив з hidden на visible, інакше твоє світіння просто обріжеться */
-    flex-shrink: 0 !important;
+    border-radius: 50% !important; /* Робить коло */
+    overflow: hidden !important;   /* Обрізає все, що вилазить за межі кола */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #user-avatar {
