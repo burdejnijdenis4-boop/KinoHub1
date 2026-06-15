@@ -403,37 +403,51 @@ filterPills.forEach(pill => {
 });
 
 function applyAllFilters() {
-    // 1. БЕЗОПАСНАЯ ПРОВЕРКА (не ломает скрипт, если база ещё не загрузилась)
+function applyAllFilters() {
+    // Перевірка, чи дані завантажені
     if (typeof moviesDatabase === 'undefined' || moviesDatabase.length === 0) {
         return; 
     }
     
     let filtered = [...moviesDatabase];
     
-    // 2. ПОИСК АКТИВНОГО ФИЛЬТРА (вернул твои старые надежные классы)
+    // Пошук фільтра
     const activePill = document.querySelector('.filter-pill.selected, .filter-tab.selected, .status-circle.selected');
     const value = activePill ? activePill.innerText.trim() : "Всі";
 
-    // 3. ЛОГИКА ФИЛЬТРАЦИИ С ЗАЩИТОЙ (try-catch)
+    // Логіка фільтрації
     try {
         if (value === "Новинки") {
             filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
         } else if (value === "За рейтингом ★") {
             filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
         } else if (value !== "Всі" && value !== "Популярні") { 
-            // Ищем совпадения по жанру, названию или году
             filtered = filtered.filter(m => {
                 if (!m) return false;
                 const inGenre = m.genre && m.genre.toLowerCase().includes(value.toLowerCase());
                 const inTitle = m.title && m.title.toLowerCase().includes(value.toLowerCase());
                 const inYear = m.year == parseInt(value);
-                
                 return inGenre || inTitle || inYear;
             });
         }
     } catch (e) {
-        console.error("Ошибка при фильтрации:", e);
+        console.error("Помилка при фільтрації:", e);
     }
+
+    // Застосування результату
+    filteredMovies = filtered;
+    if (typeof currentPage !== 'undefined') currentPage = 1;
+    
+    if (typeof renderKinokradList === 'function') {
+        renderKinokradList(); 
+    }
+
+    // Скрол до результатів (без дублікатів!)
+    const targetSection = document.querySelector('.news-section');
+    if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
 
     // 4. ПРИМЕНЕНИЕ И ОТРИСОВКА
     filteredMovies = filtered;
