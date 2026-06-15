@@ -64,9 +64,24 @@ async function updateUI() {
         balanceElement.innerText = Number(userData.balance || 0).toLocaleString('uk-UA');
     }
 
-    // Оновлюємо аватарку
+    // Оновлюємо аватарку (виправлено для кольорових аватарок та прапорів)
     if (avatarElement && userData.avatar) {
-        avatarElement.src = userData.avatar;
+        if (userData.avatar.startsWith('#') || userData.avatar.startsWith('linear-gradient') || userData.avatar.startsWith('flag:')) {
+            avatarElement.style.opacity = '0'; // Ховаємо биту картинку
+            const wrapper = avatarElement.closest('.avatar-wrapper');
+            if (wrapper) {
+                if (userData.avatar.startsWith('flag:')) {
+                    wrapper.style.background = '#4a90e2'; // Спрощений фон для прапорів у шапці
+                } else {
+                    wrapper.style.background = userData.avatar;
+                }
+            }
+        } else {
+            avatarElement.src = userData.avatar;
+            avatarElement.style.opacity = '1';
+            const wrapper = avatarElement.closest('.avatar-wrapper');
+            if (wrapper) wrapper.style.background = 'transparent';
+        }
     }
 }
 
@@ -100,6 +115,7 @@ async function addCoinsToCloud(amountToAdd) {
 
 // ====================================================================
 // 4. ФУНКЦІЯ ДЛЯ ПОКУПОК У МАГАЗИНІ
+// ====================================================================
 async function buyItemFromShop(itemId, itemName, itemUrl, itemPrice) {
     const currentUser = sessionStorage.getItem('secureUser');
     if (!currentUser) {
@@ -123,7 +139,6 @@ async function buyItemFromShop(itemId, itemName, itemUrl, itemPrice) {
         if (!users[currentUser].inventory) users[currentUser].inventory = [];
         const alreadyOwns = users[currentUser].inventory.some(item => item.id === itemId);
         if (alreadyOwns) {
-            // Якщо вже купив, просто встановлюємо як активну аватарку
             users[currentUser].avatar = itemUrl; 
             await saveUsersToCloud(users);
             await updateUI();
@@ -131,11 +146,8 @@ async function buyItemFromShop(itemId, itemName, itemUrl, itemPrice) {
             return true;
         }
 
-        // Здійснюємо покупку
         users[currentUser].balance = currentBalance - itemPrice;
         users[currentUser].inventory.push({ id: itemId, name: itemName, url: itemUrl });
-        
-        // ДОДАЙТЕ ЦЕЙ РЯДОК, ЩОБ АВТОМАТИЧНО СТАВИТИ КУПЛЕНУ АВАТАРКУ:
         users[currentUser].avatar = itemUrl;
 
         await saveUsersToCloud(users);
@@ -149,6 +161,7 @@ async function buyItemFromShop(itemId, itemName, itemUrl, itemPrice) {
         return false;
     }
 }
+
 // ====================================================================
 // 5. ФУНКЦІЯ "ПЕРЕГЛЯНУТИ ПІЗНІШЕ" (WATCH LATER)
 // ====================================================================
@@ -484,7 +497,10 @@ async function sendMessage() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-        const response = await fetch('https://burdejnijdenis4-boop.github.io/KinoHub1', {
+        // =========================================================================================
+        // УВАГА! ТУТ ТРЕБА ВСТАВИТИ СВОЮ АДРЕСУ З RENDER, ЯКЩО ВОНА ВІДРІЗНЯЄТЬСЯ
+        // =========================================================================================
+        const response = await fetch('https://твоя-назва.onrender.com/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text, useFilter: useFilter }) 
@@ -856,46 +872,3 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUser = sessionStorage.getItem('secureUser');
     console.log("Поточний користувач:", currentUser);
 });
-// Функція спеціально для покупки аватарів (обробляє SVG код як URL)
-async function updateUI() {
-    const currentUser = sessionStorage.getItem('secureUser');
-    const users = await loadUsersFromCloud();
-    
-    if (!users || !users[currentUser]) return;
-
-    const userData = users[currentUser];
-
-    // 1. Оновлюємо баланс
-    const balanceEl = document.getElementById('balance');
-    if (balanceEl) balanceEl.innerText = userData.balance.toLocaleString();
-
-    // 2. Оновлюємо аватарку (підтримка і картинок, і SVG)
-    const avatarEl = document.getElementById('user-avatar');
-    if (avatarEl && userData.avatar) {
-        if (userData.avatar.trim().startsWith('<svg')) {
-            avatarEl.innerHTML = userData.avatar;
-        } else {
-            avatarEl.innerHTML = `<img src="${userData.avatar}" style="width:100%; height:100%; border-radius:50%">`;
-        }
-    }
-
-    // 3. (Важливо!) Оновлюємо кнопки в магазині, якщо ви на сторінці avatars.html
-    const buyButtons = document.querySelectorAll('.buy-btn');
-    if (buyButtons.length > 0 && userData.inventory) {
-        buyButtons.forEach(btn => {
-            // Припускаємо, що ID аватарки передано в onclick
-            const onclickAttr = btn.getAttribute('onclick');
-            // Шукаємо ID всередині рядка onclick, наприклад 'flag:cz'
-            const match = onclickAttr.match(/'([^']+)'/); 
-            if (match) {
-                const avatarId = match[1];
-                const isOwned = userData.inventory.some(item => item.id === avatarId);
-                if (isOwned) {
-                    btn.innerText = "Вдягнено";
-                    btn.style.background = "#28a745";
-                    btn.disabled = true;
-                }
-            }
-        });
-    }
-}
