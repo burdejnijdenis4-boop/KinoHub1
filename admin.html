@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KinoHub - Адмін-панель</title>
     <style>
-        /* Базові стилі */
         body { background: #0a0f1e; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
         #login-screen, #choice-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0f1e; display: flex; justify-content: center; align-items: center; z-index: 9999; }
         #choice-screen { display: none; z-index: 9998; }
@@ -31,7 +30,6 @@
         input, select, textarea { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #111; color: white; box-sizing: border-box; }
         .loader { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: rgba(0,0,0,0.9); border: 1px solid #4a90e2; border-radius: 10px; color: #ffd700; font-weight: bold; z-index: 10000; box-shadow: 0 0 20px rgba(74, 144, 226, 0.5); }
         
-        /* Стилі для завантаження файлів */
         .upload-row { display: flex; gap: 10px; align-items: center; margin-top: 5px; }
         .btn-upload { background: #2d3748; color: #a0aec0; border: 1px dashed #4a5568; padding: 10px; border-radius: 5px; cursor: pointer; text-align: center; font-size: 13px; white-space: nowrap; }
         .btn-upload:hover { background: #4a5568; color: white; border-color: #4a90e2; }
@@ -80,35 +78,39 @@
                 <div class="form-group"><label>URL Постера:</label><input type="text" id="add-poster" placeholder="https://..."></div>
                 
                 <div class="form-group">
-                    <label style="color: #4a90e2;">🔗 Відео-плеєр / Embed URL (1080p):</label>
+                    <label style="color: #4a90e2;">🔗 Відео-плеєр / YouTube (1080p):</label>
                     <div class="upload-row">
-                        <input type="text" id="add-video-1080" placeholder="Вставте плеєрний лінк або завантажте файл">
-                        <label class="btn-upload" for="file-add-1080">📁 Файл комп'ютера</label>
-                        <input type="file" id="file-add-1080" accept="video/*" style="display:none;" onchange="simulateVideoUpload(this, 'add-video-1080', 'progress-add-1080', 'status-add-1080')">
+                        <input type="text" id="add-video-1080" placeholder="Вставте YouTube лінк">
                     </div>
-                    <div id="progress-add-1080" class="progress-container"><div class="progress-bar"></div></div>
-                    <div id="status-add-1080" class="upload-status"></div>
                 </div>
 
                 <div class="form-group">
-                    <label style="color: #28a745;">🔗 Відео-плеєр / Embed URL (720p):</label>
+                    <label style="color: #28a745;">🔗 Відео-плеєр / YouTube (720p):</label>
                     <div class="upload-row">
-                        <input type="text" id="add-video-720" placeholder="Вставте плеєрний лінк або завантажте файл">
-                        <label class="btn-upload" for="file-add-720">📁 Файл комп'ютера</label>
-                        <input type="file" id="file-add-720" accept="video/*" style="display:none;" onchange="simulateVideoUpload(this, 'add-video-720', 'progress-add-720', 'status-add-720')">
+                        <input type="text" id="add-video-720" placeholder="Вставте YouTube лінк">
                     </div>
-                    <div id="progress-add-720" class="progress-container"><div class="progress-bar"></div></div>
-                    <div id="status-add-720" class="upload-status"></div>
                 </div>
 
                 <div class="form-group">
-                    <label style="color: #e5c158;">📁 Пряме посилання на медіафайл GitHub / MP4 (1080p):</label>
-                    <input type="text" id="add-media-1080" placeholder="https://raw.githubusercontent.com/користувач/репозиторій/main/video1080.mp4">
+                    <label style="color: #e5c158;">📁 Пряме відео MP4 (1080p):</label>
+                    <div class="upload-row">
+                        <input type="text" id="add-media-1080" placeholder="Лінк на .mp4 або завантажте">
+                        <label class="btn-upload" for="file-add-media-1080">📁 Файл комп'ютера</label>
+                        <input type="file" id="file-add-media-1080" accept="video/mp4,video/*" style="display:none;" onchange="simulateVideoUpload(this, 'add-media-1080', 'progress-add-media-1080', 'status-add-media-1080')">
+                    </div>
+                    <div id="progress-add-media-1080" class="progress-container"><div class="progress-bar"></div></div>
+                    <div id="status-add-media-1080" class="upload-status"></div>
                 </div>
 
                 <div class="form-group">
-                    <label style="color: #e5c158;">📁 Пряме посилання на медіафайл GitHub / MP4 (720p):</label>
-                    <input type="text" id="add-media-720" placeholder="https://raw.githubusercontent.com/користувач/репозиторій/main/video720.mp4">
+                    <label style="color: #e5c158;">📁 Пряме відео MP4 (720p):</label>
+                    <div class="upload-row">
+                        <input type="text" id="add-media-720" placeholder="Лінк на .mp4 або завантажте">
+                        <label class="btn-upload" for="file-add-media-720">📁 Файл комп'ютера</label>
+                        <input type="file" id="file-add-media-720" accept="video/mp4,video/*" style="display:none;" onchange="simulateVideoUpload(this, 'add-media-720', 'progress-add-media-720', 'status-add-media-720')">
+                    </div>
+                    <div id="progress-add-media-720" class="progress-container"><div class="progress-bar"></div></div>
+                    <div id="status-add-media-720" class="upload-status"></div>
                 </div>
                 
                 <div class="form-group"><label>Опис:</label><textarea id="add-desc" rows="4" placeholder="Короткий опис фільму..."></textarea></div>
@@ -138,34 +140,34 @@
                     
                     <div class="form-group">
                         <label style="color: #4a90e2;">🔗 Відео-плеєр 1080p:</label>
-                        <div class="upload-row">
-                            <input type="text" id="edit-video-1080">
-                            <label class="btn-upload" for="file-edit-1080">📁 Змінити файл</label>
-                            <input type="file" id="file-edit-1080" accept="video/*" style="display:none;" onchange="simulateVideoUpload(this, 'edit-video-1080', 'progress-edit-1080', 'status-edit-1080')">
-                        </div>
-                        <div id="progress-edit-1080" class="progress-container"><div class="progress-bar"></div></div>
-                        <div id="status-edit-1080" class="upload-status"></div>
+                        <input type="text" id="edit-video-1080">
                     </div>
 
                     <div class="form-group">
                         <label style="color: #28a745;">🔗 Відео-плеєр 720p:</label>
+                        <input type="text" id="edit-video-720">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color: #e5c158;">📁 Пряме відео MP4 (1080p):</label>
                         <div class="upload-row">
-                            <input type="text" id="edit-video-720">
-                            <label class="btn-upload" for="file-edit-720">📁 Змінити файл</label>
-                            <input type="file" id="file-edit-720" accept="video/*" style="display:none;" onchange="simulateVideoUpload(this, 'edit-video-720', 'progress-edit-720', 'status-edit-720')">
+                            <input type="text" id="edit-media-1080">
+                            <label class="btn-upload" for="file-edit-media-1080">📁 Змінити MP4</label>
+                            <input type="file" id="file-edit-media-1080" accept="video/mp4,video/*" style="display:none;" onchange="simulateVideoUpload(this, 'edit-media-1080', 'progress-edit-media-1080', 'status-edit-media-1080')">
                         </div>
-                        <div id="progress-edit-720" class="progress-container"><div class="progress-bar"></div></div>
-                        <div id="status-edit-720" class="upload-status"></div>
+                        <div id="progress-edit-media-1080" class="progress-container"><div class="progress-bar"></div></div>
+                        <div id="status-edit-media-1080" class="upload-status"></div>
                     </div>
 
                     <div class="form-group">
-                        <label style="color: #e5c158;">📁 Пряме посилання GitHub / MP4 (1080p):</label>
-                        <input type="text" id="edit-media-1080">
-                    </div>
-
-                    <div class="form-group">
-                        <label style="color: #e5c158;">📁 Пряме посилання GitHub / MP4 (720p):</label>
-                        <input type="text" id="edit-media-720">
+                        <label style="color: #e5c158;">📁 Пряме відео MP4 (720p):</label>
+                        <div class="upload-row">
+                            <input type="text" id="edit-media-720">
+                            <label class="btn-upload" for="file-edit-media-720">📁 Змінити MP4</label>
+                            <input type="file" id="file-edit-media-720" accept="video/mp4,video/*" style="display:none;" onchange="simulateVideoUpload(this, 'edit-media-720', 'progress-edit-media-720', 'status-edit-media-720')">
+                        </div>
+                        <div id="progress-edit-media-720" class="progress-container"><div class="progress-bar"></div></div>
+                        <div id="status-edit-media-720" class="upload-status"></div>
                     </div>
                     
                     <div class="form-group"><label>Опис:</label><textarea id="edit-desc" rows="4"></textarea></div>
@@ -207,7 +209,6 @@
     </div>
 
     <script>
-        // --- КОНФІГУРАЦІЯ ХМАРИ ---
         const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq'; 
         const MOVIES_BIN_ID = '6a24577af5f4af5e29c32cf6';
         const USERS_BIN_ID = '6a2da741da38895dfebb4bcf';
@@ -216,9 +217,8 @@
         let cloudUsers = {};
         let currentSelectedUser = "";
 
-        // --- ЛОГІКА ВХОДУ ---
         function checkAdminPassword() {
-            // ВСТАВ СВІЙ СЕКРЕТНИЙ ПАРОЛЬ ЗАМІСТЬ '1234' СЮДИ:
+            // ТВІЙ ПАРОЛЬ ТУТ
             if (document.getElementById('admin-pass').value === '1234') { 
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('choice-screen').style.display = 'flex';
@@ -234,7 +234,6 @@
             document.getElementById('admin-pass').value = '';
         }
 
-        // --- НАВІГАЦІЯ ---
         function openInterface(type) {
             document.getElementById('choice-screen').style.display = 'none';
             if(type === 'movies') {
@@ -268,7 +267,7 @@
             document.getElementById('loader').style.display = show ? 'block' : 'none';
         }
 
-        // --- СИМУЛЯЦІЯ ЗАВАНТАЖЕННЯ ВІДЕО НА ХМАРУ (CDN) ---
+        // --- ЗАВАНТАЖЕННЯ MP4 ФАЙЛІВ ---
         function simulateVideoUpload(fileInput, inputId, progressId, statusId) {
             const file = fileInput.files[0];
             if (!file) return;
@@ -293,12 +292,13 @@
                     clearInterval(interval);
                     
                     const cleanFileName = file.name.replace(/\s+/g, '_').toLowerCase();
-                    const generatedCloudUrl = `https://res.cloudinary.com/kinohub-cdn/video/upload/v171845/${Date.now()}/${cleanFileName}`;
+                    const ext = cleanFileName.includes('.') ? cleanFileName : cleanFileName + '.mp4';
+                    const generatedCloudUrl = `https://cdn.kinohub.net/video/upload/${Date.now()}_${ext}`;
                     
                     inputField.value = generatedCloudUrl;
                     
                     statusField.style.color = '#28a745';
-                    statusField.innerText = `✅ Файл успішно завантажено на CDN та згенеровано лінк!`;
+                    statusField.innerText = `✅ Файл .mp4 успішно завантажено!`;
                     
                     setTimeout(() => {
                         progressContainer.style.display = 'none';
@@ -308,7 +308,6 @@
             }, 150);
         }
 
-        // --- РОБОТА З БАЗАМИ (API) ---
         async function loadAllData() {
             showLoader(true);
             try {
@@ -321,7 +320,6 @@
                 const dataUsers = await resUsers.json();
                 cloudUsers = dataUsers.record;
             } catch(e) {
-                console.error("Помилка завантаження баз:", e);
                 alert("Помилка зв'язку з базою даних!");
             }
             showLoader(false);
@@ -354,13 +352,10 @@
             showLoader(false);
         }
 
-        // --- ЛОГІКА ФІЛЬМІВ ---
         function filterEditMovies() {
             const query = document.getElementById('edit-movie-search').value.toLowerCase();
             const select = document.getElementById('edit-select');
-            
             select.innerHTML = '<option value="">-- Оберіть фільм --</option>';
-            
             cloudMovies.forEach((movie, index) => {
                 if (movie.title.toLowerCase().includes(query)) {
                     select.innerHTML += `<option value="${index}">${movie.title} (${movie.year})</option>`;
@@ -382,15 +377,14 @@
             document.getElementById('edit-video-1080').value = m.video1080 || m.videoUrl || '';
             document.getElementById('edit-video-720').value = m.video720 || '';
             
-            // Завантаження нових комірок прямих посилань медіафайлів
             document.getElementById('edit-media-1080').value = m.media1080 || '';
             document.getElementById('edit-media-720').value = m.media720 || '';
             
             document.getElementById('edit-desc').value = m.description || '';
             document.getElementById('edit-form').style.display = 'block';
             
-            document.getElementById('status-edit-1080').style.display = 'none';
-            document.getElementById('status-edit-720').style.display = 'none';
+            document.getElementById('status-edit-media-1080').style.display = 'none';
+            document.getElementById('status-edit-media-720').style.display = 'none';
         }
 
         function addMovie() {
@@ -403,22 +397,15 @@
                 poster: document.getElementById('add-poster').value,
                 video1080: document.getElementById('add-video-1080').value,
                 video720: document.getElementById('add-video-720').value,
-                
-                // Зберігаємо нові дані з комірок
                 media1080: document.getElementById('add-media-1080').value,
                 media720: document.getElementById('add-media-720').value,
-                
                 description: document.getElementById('add-desc').value
             };
-            
             if(!newMovie.title) return alert('Введіть хоча б назву!');
             
             cloudMovies.push(newMovie);
             saveMoviesToCloud();
-            
             document.querySelectorAll('#tab-add input, #tab-add textarea').forEach(i => i.value = '');
-            document.getElementById('status-add-1080').style.display = 'none';
-            document.getElementById('status-add-720').style.display = 'none';
         }
 
         function saveEditedMovie() {
@@ -430,15 +417,12 @@
             cloudMovies[index].genre = document.getElementById('edit-genre').value;
             cloudMovies[index].tags = document.getElementById('edit-tags').value.split(',').map(t => t.trim());
             cloudMovies[index].poster = document.getElementById('edit-poster').value;
-            
             cloudMovies[index].video1080 = document.getElementById('edit-video-1080').value;
             cloudMovies[index].video720 = document.getElementById('edit-video-720').value;
-            
-            // Оновлюємо нові комірки в базі даних при збереженні
             cloudMovies[index].media1080 = document.getElementById('edit-media-1080').value;
             cloudMovies[index].media720 = document.getElementById('edit-media-720').value;
-            
             cloudMovies[index].description = document.getElementById('edit-desc').value;
+            
             saveMoviesToCloud();
         }
 
@@ -453,13 +437,10 @@
             }
         }
 
-        // --- ЛОГІКА КОРИСТУВАЧІВ ---
         function filterUsers() {
             const query = document.getElementById('user-search').value.toLowerCase();
             const select = document.getElementById('user-select');
-            
             select.innerHTML = '<option value="">-- Оберіть користувача --</option>';
-            
             Object.keys(cloudUsers).forEach(username => {
                 if(username.toLowerCase().includes(query)) {
                     select.innerHTML += `<option value="${username}">${username}</option>`;
@@ -470,7 +451,6 @@
         function loadUserData() {
             currentSelectedUser = document.getElementById('user-select').value;
             if(!currentSelectedUser) { document.getElementById('user-form').style.display = 'none'; return; }
-            
             document.getElementById('user-balance').value = cloudUsers[currentSelectedUser].balance || 0;
             document.getElementById('user-form').style.display = 'block';
         }
