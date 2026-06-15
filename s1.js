@@ -404,7 +404,7 @@ filterPills.forEach(pill => {
 });
 
 function applyAllFilters() {
-    // Якщо база ще не завантажена, нічого не робимо
+    // 1. Перевірка бази
     if (typeof moviesDatabase === 'undefined' || !moviesDatabase) {
         console.log("База ще не завантажена");
         return; 
@@ -412,81 +412,42 @@ function applyAllFilters() {
     
     let filtered = [...moviesDatabase];
     
-    // Знаходимо активний фільтр
+    // 2. Пошук фільтра
     const activePill = document.querySelector('.filter-pill.selected, .filter-tab.selected, .status-circle.selected');
     const value = activePill ? activePill.innerText.trim() : "Всі";
 
-    // Логіка сортування та фільтрації
-    if (value === "Новинки") {
-        filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
-    } else if (value === "За рейтингом ★") {
-        filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
-    } else if (value !== "Всі" && value !== "Популярні") { 
-        filtered = filtered.filter(m => {
-            if (!m) return false;
-            const inGenre = m.genre && m.genre.toLowerCase().includes(value.toLowerCase());
-            const inTitle = m.title && m.title.toLowerCase().includes(value.toLowerCase());
-            const inYear = m.year == parseInt(value);
-            return inGenre || inTitle || inYear;
-        });
+    // 3. Логіка сортування та фільтрації
+    try {
+        if (value === "Новинки") {
+            filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
+        } else if (value === "За рейтингом ★") {
+            filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+        } else if (value !== "Всі" && value !== "Популярні") { 
+            filtered = filtered.filter(m => {
+                if (!m) return false;
+                const inGenre = m.genre && m.genre.toLowerCase().includes(value.toLowerCase());
+                const inTitle = m.title && m.title.toLowerCase().includes(value.toLowerCase());
+                const inYear = m.year == parseInt(value);
+                return inGenre || inTitle || inYear;
+            });
+        }
+    } catch (e) {
+        console.error("Помилка:", e);
     }
 
-    // ТУТ ВАЖЛИВО: присвоюємо результат у нашу глобальну змінну
+    // 4. Оновлення та відмальовка
     filteredMovies = filtered;
+    if (typeof currentPage !== 'undefined') currentPage = 1;
     
-    // Скидаємо сторінку
-    if (typeof currentPage !== 'undefined') currentPage = 1; 
-    
-    // Перемальовуємо
     if (typeof renderKinokradList === 'function') {
         renderKinokradList(); 
     }
 
-    // Скрол
-    const targetSection = document.querySelector('.news-section');
-    if (targetSection) {
-        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // 5. Скрол до результатів
+    const scrollSection = document.querySelector('.news-section');
+    if (scrollSection) {
+        scrollSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-}
-
-    // 4. ПРИМЕНЕНИЕ И ОТРИСОВКА
-    filteredMovies = filtered;
-    
-    // Сбрасываем пагинацию на первую страницу
-    if (typeof currentPage !== 'undefined') {
-        currentPage = 1; 
-    }
-    
-    // Отрисовываем фильмы на экране
-    if (typeof renderKinokradList === 'function') {
-        renderKinokradList(); 
-    }
-}
-
-    // 4. Оновлюємо глобальний масив та перемальовуємо
-    filteredMovies = filtered;
-    currentPage = 1; 
-    
-    // Викликаємо функцію відтворення каталогу
-    renderKinokradList(); 
-    
-    // 5. Плавний скрол до каталогу (опціонально)
-    const newsSection = document.querySelector('.news-section');
-    if (newsSection) {
-        newsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    // 4. Оновлюємо глобальний масив та перемальовуємо
-    filteredMovies = filtered;
-    currentPage = 1; 
-    
-    // Викликаємо функцію відтворення каталогу
-    renderKinokradList(); 
-    
- // 5. Плавний скрол до каталогу (Виправлена версія)
-const scrollTarget = document.querySelector('.news-section');
-if (scrollTarget) {
-    scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ====================================================================
