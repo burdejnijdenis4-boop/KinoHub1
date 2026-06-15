@@ -469,8 +469,8 @@ function applyAllFilters() {
     // Викликаємо функцію відтворення каталогу
     renderKinokradList(); 
     
-    // 5. Плавний скрол до каталогу (опціонально)
-    const newsSection = document.querySelector('.news-section');
+  // 5. Плавний скрол до каталогу
+    newsSection = document.querySelector('.news-section'); // const вже не потрібен!
     if (newsSection) {
         newsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
