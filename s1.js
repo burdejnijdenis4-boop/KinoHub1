@@ -500,7 +500,7 @@ async function sendMessage() {
         // =========================================================================================
         // УВАГА! ТУТ ТРЕБА ВСТАВИТИ СВОЮ АДРЕСУ З RENDER, ЯКЩО ВОНА ВІДРІЗНЯЄТЬСЯ
         // =========================================================================================
-        const response = await fetch('https://твоя-назва.onrender.com/api/chat', {
+        const response = await fetch('https://kinohub-oo6e.onrender.com/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text, useFilter: useFilter }) 
