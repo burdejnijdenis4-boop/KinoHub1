@@ -4,7 +4,7 @@ const cors = require('cors');
 const OpenAI = require('openai');
 const app = express();
 
-app.use(cors({ origin: '*' })); // ДОЗВОЛЯЄМО ВСІМ
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 const client = new OpenAI({
@@ -21,7 +21,7 @@ app.post('/api/chat', async (req, res) => {
         });
         res.json({ reply: completion.choices[0].message.content });
     } catch (error) {
-        res.status(500).json({ reply: "Помилка" });
+        res.status(500).json({ reply: "Помилка сервера" });
     }
 });
 
