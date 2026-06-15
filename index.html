@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoHub - Головна</title>
+    <link rel="stylesheet" href="s1.css">
+</head>
+<body>
+
+    <div class="currency-container">
+    <a href="earn.html" class="currency-link">
+        <div class="currency-item">
+            <img src="завантаження.png" alt="coin" class="coin-icon">
+            <span id="balance">1,250</span>
+        </div>
+    </a>
+    
+    <a href="admin.html" title="Увійти в Панель Адміністратора" style="margin-left: 10px; font-size: 22px; text-decoration: none; transition: transform 0.3s ease; display: flex; align-items: center;" onmouseover="this.style.transform='rotate(90deg)'" onmouseout="this.style.transform='rotate(0deg)'">⚙️</a>
+</div>
+        <a href="admin.html" title="Увійти в Панель Адміністратора" style="margin-left: 10px; font-size: 22px; text-decoration: none; transition: transform 0.3s ease; display: flex; align-items: center;" onmouseover="this.style.transform='rotate(90deg)'" onmouseout="this.style.transform='rotate(0deg)'">⚙️</a>
+    </div>
+
+    <div class="profile-section">
+        <a href="#" onclick="handleProfileClick(event)" class="profile-link">
+            <div class="avatar-wrapper">
+                <img src="https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg" alt="User Avatar" id="user-avatar">
+                <div class="edit-badge">✎</div>
+            </div>
+            <span class="username" id="main-username">Увійти</span>
+        </a>
+    </div>
+
+    <div class="status-circles">
+        <a href="libery.html" class="sidebar-menu-btn">
+            <span>📚 Бібліотека</span>
+        </a>
+
+        <div class="sidebar-menu-btn toggle-wrapper" id="theme-toggle-btn">
+    <span id="theme-icon">🌙 Тема</span>
+    <div class="toggle-switch"></div>
+</div>
+
+        <div class="sidebar-menu-btn toggle-wrapper active-toggle" id="chat-toggle-btn">
+            <span>🤖 Кіно-Гід</span>
+            <div class="toggle-switch"></div>
+        </div>
+    </div>
+    
+    <div class="chat-sidebar">
+        <div class="chat-header">
+            <h3 class="chat-title">AI Кіно-Гід</h3>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="aiToggleBtn" class="header-icon-btn" title="AI Фільтр: ВИМКНЕНО">🤖</button>
+                
+                <button id="pin-chat-btn" class="header-icon-btn" title="Відкріпити чат">🔓</button>
+                <button id="close-chat-btn" class="header-icon-btn close-btn-chat" title="Закрити чат">&times;</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="bot-message">Привіт! Який фильм знайти? (Натисни 🤖, щоб я шукав у базі)</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Напиши запит...">
+            <button id="send-btn">➤</button>
+        </div>
+    </div>
+
+    <div class="genre-sidebar">
+        <h3 class="genre-title">Навігація</h3>
+        <div class="filter-section">
+            <h4 class="filter-subtitle">Сортування</h4>
+            <div class="pill-container">
+                <div class="filter-pill">За рейтингом ★</div>
+                <div class="filter-pill">Новинки</div>
+                <div class="filter-pill">Популярні</div>
+            </div>
+        </div>
+        <div class="filter-section">
+            <h4 class="filter-subtitle">Жанри</h4>
+            <div class="pill-container">
+                <div class="filter-pill">Бойовик</div>
+                <div class="filter-pill">Комедія</div>
+                <div class="filter-pill">Драма</div>
+                <div class="filter-pill">Фентезі</div>
+                <div class="filter-pill">Жахи</div>
+                <div class="filter-pill">Трилер</div>
+                <div class="filter-pill">Аніме</div>
+                <div class="filter-pill">Детектив</div>
+            </div>
+        </div>
+        <button class="apply-filters-btn">Застосувати фільтри</button>
+    </div>
+
+    <div class="movie-container">
+        <button class="nav-btn prev">❮</button>
+        <div class="movie-carousel" id="carousel"></div>
+        <button class="nav-btn next">❯</button>
+
+        <div id="movie-info" class="movie-details">
+            <div class="news-section">
+                <h2 class="section-title">Каталог фільмів</h2>
+                <div id="movie-list" class="movie-list"></div>
+                <div id="pagination-container" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-1" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal="modal-1">&times;</span>
+            <h2>Налаштування</h2>
+            <p>Тут буде контент першого вікна...</p>
+        </div>
+    </div>
+    <div id="modal-2" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal="modal-2">&times;</span>
+            <h2>Повідомлення</h2>
+            <p>Тут буде контент другого вікна...</p>
+        </div>
+    </div>
+
+    <script src="s1.js"></script>
+
+    <footer>
+        <div class="footer-content">
+            <p>"Кіно — це дзеркало душі, де кожен фільм відкриває нові світи."</p>
+            <p>© 2026 KinoHub. Всі права захищені.</p>
+        </div>
+    </footer>
+</body>
+</html>
