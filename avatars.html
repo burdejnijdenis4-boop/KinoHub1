@@ -146,7 +146,6 @@
     </div>
     
     <script src="s1.js"></script>
-    <script src="s1.js"></script>
     <script>
         // 1. Функція для купівлі та встановлення аватарки
         async function handleAvatarAction(avatarData, price, btnElement) {
@@ -162,7 +161,12 @@
                 btnElement.disabled = true;
 
                 const users = await loadUsersFromCloud();
-                if (!users || !users[currentUser]) return;
+                if (!users || !users[currentUser]) {
+                    alert("Помилка завантаження профілю.");
+                    btnElement.innerText = originalText;
+                    btnElement.disabled = false;
+                    return;
+                }
 
                 let user = users[currentUser];
                 if (!user.inventory) user.inventory = [];
@@ -171,26 +175,47 @@
                 const isOwned = user.inventory.some(item => item.id === avatarData);
 
                 if (isOwned) {
-                    // Якщо вже куплено - просто вдягаємо
+                    // ЯКЩО ВЖЕ КУПЛЕНО - ВДЯГАЄМО
                     user.avatar = avatarData;
                     await saveUsersToCloud(users);
+                    
+                    // ВАЖЛИВО: Синхронізуємо з профілем!
+                    localStorage.setItem("selectedAvatar", avatarData);
+                    
                     alert("✅ Аватарку успішно вдягнено!");
-                    btnElement.innerText = "Вдягнено";
-                    btnElement.style.background = "#28a745"; // Зелений
+                    
+                    // Оновлюємо вигляд кнопок (Вдягнено / Вдягнути)
+                    document.querySelectorAll('.buy-btn').forEach(b => {
+                        const onclickAttr = b.getAttribute('onclick');
+                        if(onclickAttr && onclickAttr.includes(avatarData)) {
+                            b.innerText = "Вдягнено";
+                            b.style.background = "#28a745"; // Зелений
+                        } else if (onclickAttr) {
+                            const match = onclickAttr.match(/'([^']+)'/);
+                            if(match && user.inventory.some(i => i.id === match[1])) {
+                                b.innerText = "Вдягнути";
+                                b.style.background = "#4a90e2"; // Синій
+                            }
+                        }
+                    });
                 } else {
-                    // Якщо немає - купуємо
+                    // ЯКЩО НЕ КУПЛЕНО - КУПУЄМО
                     if (user.balance < price) {
                         alert("❌ Недостатньо монет!");
                         btnElement.innerText = originalText;
                         btnElement.disabled = false;
                         return;
                     }
-                    // Знімаємо гроші, додаємо в інвентар і одразу вдягаємо
+                    
                     user.balance -= price;
                     user.inventory.push({ id: avatarData, name: "Аватар", url: avatarData });
                     user.avatar = avatarData; 
                     
                     await saveUsersToCloud(users);
+                    
+                    // ВАЖЛИВО: Синхронізуємо баланс та аватарку з профілем!
+                    localStorage.setItem("selectedAvatar", avatarData);
+                    localStorage.setItem("userBalance", user.balance);
                     
                     const balanceEl = document.getElementById('balance');
                     if(balanceEl) balanceEl.innerText = user.balance.toLocaleString();
@@ -202,8 +227,9 @@
             } catch (error) {
                 console.error("Помилка магазину:", error);
                 alert("Сталася помилка при обробці запиту.");
-                btnElement.disabled = false;
                 btnElement.innerText = "Помилка";
+            } finally {
+                btnElement.disabled = false; // Розблоковуємо кнопку
             }
         }
 
@@ -213,12 +239,10 @@
             if (!currentUser) return;
 
             const users = await loadUsersFromCloud();
-            if (!users) return;
+            if (!users || !users[currentUser]) return;
             
             const user = users[currentUser];
-            if (!user) return;
             
-            // Оновлюємо баланс на екрані
             const balanceEl = document.getElementById('balance');
             if(balanceEl && user.balance !== undefined) {
                 balanceEl.innerText = user.balance.toLocaleString();
@@ -226,18 +250,21 @@
 
             if (!user.inventory) return;
 
-            // Шукаємо кнопки і міняємо текст, якщо аватарка вже є
+            // Відмальовуємо кнопки відповідно до статусу (Куплено/Вдягнено)
             document.querySelectorAll('.buy-btn').forEach(btn => {
                 const onclickAttr = btn.getAttribute('onclick');
                 if (!onclickAttr) return;
                 
-                // Витягуємо код аватарки (наприклад '#2ecc71' або 'flag:ua') з onclick
                 const match = onclickAttr.match(/'([^']+)'/);
                 if (match) {
                     const avatarId = match[1];
                     const isOwned = user.inventory.some(item => item.id === avatarId);
+                    const isActive = user.avatar === avatarId;
                     
-                    if (isOwned) {
+                    if (isActive) {
+                        btn.innerText = "Вдягнено";
+                        btn.style.background = "#28a745"; // Зелений
+                    } else if (isOwned) {
                         btn.innerText = "Вдягнути";
                         btn.style.background = "#4a90e2"; // Синій
                     }
