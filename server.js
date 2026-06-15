@@ -2,18 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
-const path = require('path');
-
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// ДОЗВОЛЯЄМО ВСІМ
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
+app.use(cors({ origin: '*' })); // ДОЗВОЛЯЄМО ВСІМ
 app.use(express.json());
 
 const client = new OpenAI({
@@ -22,7 +13,6 @@ const client = new OpenAI({
 });
 
 app.post('/api/chat', async (req, res) => {
-    console.log("ЗАПИТ ОТРИМАНО!");
     try {
         const { message } = req.body;
         const completion = await client.chat.completions.create({
@@ -31,11 +21,11 @@ app.post('/api/chat', async (req, res) => {
         });
         res.json({ reply: completion.choices[0].message.content });
     } catch (error) {
-        console.error("Помилка:", error);
-        res.status(500).json({ reply: "Помилка сервера" });
+        res.status(500).json({ reply: "Помилка" });
     }
 });
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Сервер працює на порту ${PORT}`);
 });
