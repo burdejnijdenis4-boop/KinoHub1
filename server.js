@@ -5,18 +5,19 @@ const OpenAI = require('openai');
 const fs = require('fs');
 const path = require('path');
 
-// 1. СПОЧАТКУ створюємо app
 const app = express();
-const PORT = process.env.PORT || 3000; // Render вимагає process.env.PORT
+const PORT = process.env.PORT || 3000;
 
-// 2. ПОТІМ налаштовуємо CORS (Дозволяємо запити з твого GitHub)
+// ==========================================
+// НАЛАШТУВАННЯ CORS (Вимкнення блокування)
+// ==========================================
 app.use(cors({
-  origin: '*', // Зірочка означає "дозволити всім сайтам"
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Ініціалізація клієнта Groq
+// Ініціалізація клієнта Groq (Твій чат-бот)
 const client = new OpenAI({
     apiKey: process.env.GROQ_API_KEY,
     baseURL: 'https://api.groq.com/openai/v1',
@@ -25,7 +26,7 @@ const client = new OpenAI({
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Ключі від хмари жсонбініІ
+// Ключі від бази даних JSONBin
 const JSONBIN_ID = '6a24577af5f4af5e29c32cf6';
 const JSONBIN_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq';
 
@@ -44,7 +45,9 @@ function readMarket() {
 }
 function saveMarket(data) { fs.writeFileSync(MARKET_FILE, JSON.stringify(data, null, 2)); }
 
-// API АДМІН-ПАНЕЛІ
+// ==========================================
+// API АДМІН-ПАНЕЛІ (Відновлено!)
+// ==========================================
 app.get('/api/admin/movies', async (req, res) => {
     try {
         const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
@@ -70,34 +73,22 @@ app.post('/api/admin/update', async (req, res) => {
     }
 });
 
-// --- ДОДАТИ ЦЕЙ МАРШРУТ У server.js ---
+// ==========================================
+// МАРШРУТИ КОРИСТУВАЧІВ ТА МАГАЗИНУ
+// ==========================================
 app.post('/api/register', (req, res) => {
     const { username, password } = req.body;
-    
-    // Перевірка, чи передані дані
-    if (!username || !password) {
-        return res.status(400).json({ success: false, message: "Заповніть усі поля!" });
-    }
-
-    const db = readDatabase(); // Використовуємо твою функцію читання
-
-    // Перевірка, чи існує вже такий користувач
-    if (db[username]) {
-        return res.status(400).json({ success: false, message: "Такий користувач вже існує!" });
-    }
-
-    // Створюємо нового користувача
-    db[username] = { 
-        password: password, 
-        balance: 10, 
-        inventory: [] 
-    };
-
-    saveDatabase(db); // Зберігаємо в JSON файл
-    
-    console.log(`[РЕЄСТРАЦІЯ] Новий користувач: ${username}`);
+    if (!username || !password) return res.status(400).json({ success: false, message: "Заповніть усі поля!" });
+    const db = readDatabase();
+    if (db[username]) return res.status(400).json({ success: false, message: "Такий користувач вже існує!" });
+    db[username] = { password: password, balance: 10, inventory: [] };
+    saveDatabase(db);
     res.json({ success: true, message: "Реєстрація успішна!" });
 });
+
+app.post('/api/login', (req, res) => { res.json({ success: true, username: req.body.username }); });
+app.get('/api/profile', (req, res) => { res.json({ success: true, profile: {} }); });
+app.get('/api/market/items', (req, res) => { res.json(readMarket()); });
 
 // ==========================================
 // ГОЛОВНА МАГІЯ: API ЧАТ-БОТА
@@ -108,49 +99,24 @@ app.post('/api/chat', async (req, res) => {
         console.log(`[ЧАТ] Повідомлення: "${message}" | Режим фільтрації: ${useFilter ? 'УВІМКНЕНО' : 'ВИМКНЕНО'}`);
         
         if (useFilter) {
-            // 1. Беремо найсвіжіші фільми з хмари
             const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
                 headers: { 'X-Master-Key': JSONBIN_KEY }
             });
             const data = await response.json();
             const moviesData = JSON.stringify(data.record || []);
 
-            // 2. Жорстка інструкція для ШІ
-            const systemInstruction = `
-                Ти — розумний фільтр-асистент сайту KinoHub.
-                Ось єдина база фільмів, яка існує на сайті: ${moviesData}.
-                
-                Користувач просить: "${message}".
-                
-                Твої дії:
-                1. Знайди у базі фільми, які підходять (якщо просить бойовик - шукай жанр Бойовик, якщо легке - Комедія і т.д.).
-                2. Відповідай СУВОРО у форматі JSON і ніяк інакше.
-                
-                Формат відповіді:
-                {
-                  "reply": "Твій дружній текст для користувача (наприклад: 'Ось знайшов круті бойовики!')",
-                  "movieIds": [сюди впиши ID знайдених фільмів у вигляді чисел]
-                }
-            `;
+            const systemInstruction = `Ти — розумний фільтр-асистент сайту KinoHub. База: ${moviesData}. Користувач просить: "${message}". Відповідай строго у форматі JSON: { "reply": "текст", "movieIds": [id1, id2] }`;
 
             const completion = await client.chat.completions.create({
                 messages: [{ role: 'system', content: systemInstruction }],
                 model: 'llama-3.3-70b-versatile',
-                response_format: { type: "json_object" }, // Змушуємо віддати JSON
-                temperature: 0.2 // Знижуємо креативність, щоб не збивався
+                response_format: { type: "json_object" },
+                temperature: 0.2
             });
             
             const aiResponse = JSON.parse(completion.choices[0].message.content);
-            console.log("[ШІ ВІДПОВІВ]:", aiResponse); // Виводимо в термінал для перевірки
-            
-            return res.json({ 
-                reply: aiResponse.reply, 
-                action: 'filter', 
-                movieIds: aiResponse.movieIds || [] 
-            });
-
+            return res.json({ reply: aiResponse.reply, action: 'filter', movieIds: aiResponse.movieIds || [] });
         } else {
-            // ЗВИЧАЙНИЙ РЕЖИМ (Без фільтрації)
             const completion = await client.chat.completions.create({
                 messages: [
                     { role: 'system', content: "Ти — мій найкращий кінодруг. Бази фільмів зараз у тебе немає, просто приємно спілкуйся." },
@@ -165,11 +131,6 @@ app.post('/api/chat', async (req, res) => {
         res.status(500).json({ reply: "Бро, щось сервер трохи підвисає, спробуй ще раз." });
     }
 });
-
-// --- Інші API ---
-app.post('/api/login', (req, res) => { res.json({ success: true, username: req.body.username }); });
-app.get('/api/profile', (req, res) => { res.json({ success: true, profile: {} }); });
-app.get('/api/market/items', (req, res) => { res.json(readMarket()); });
 
 app.listen(PORT, () => {
     console.log(`🚀 Сервер працює на порту ${PORT}`);
