@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoHub - Заробіток монет</title>
+    <link rel="stylesheet" href="s1.css">
+    <style>
+        /* Стилі самого блоку заробітку (щоб він гарно виглядав у твоєму movie-container) */
+        .earn-hub {
+            background: rgba(10, 15, 30, 0.85);
+            padding: 35px;
+            border-radius: 20px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            backdrop-filter: blur(15px);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 600px;
+        }
+        body.light-theme .earn-hub {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .task-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        body.light-theme .task-card {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+        }
+        .earn-btn {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .earn-btn:hover:not(:disabled) {
+            background: #357abd;
+        }
+        .earn-btn:disabled {
+            background: #444;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        body.light-theme .earn-btn:disabled {
+            background: #ddd;
+            color: #888;
+        }
+        /* Підсвічування валюти при наведенні (твій запит) */
+        .currency-item {
+            text-decoration: none;
+            color: inherit;
+            padding-bottom: 2px;
+            border-bottom: 2px solid transparent;
+            transition: border-bottom 0.3s ease;
+        }
+        .currency-item:hover {
+            border-bottom: 2px solid #ffd700;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="currency-container">
+        <a href="earn.html" class="currency-item" title="Заробити монети">
+            <img src="завантаження.png" alt="coin" class="coin-icon">
+            <span id="balance">0</span>
+        </a>
+        <a href="admin.html" title="Увійти в Панель Адміністратора" style="margin-left: 10px; font-size: 22px; text-decoration: none; transition: transform 0.3s ease; display: flex; align-items: center;" onmouseover="this.style.transform='rotate(90deg)'" onmouseout="this.style.transform='rotate(0deg)'">⚙️</a>
+    </div>
+
+    <div class="profile-section">
+        <a href="#" onclick="handleProfileClick(event)" class="profile-link">
+            <div class="avatar-wrapper">
+                <img src="https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg" alt="User Avatar" id="user-avatar">
+                <div class="edit-badge">✎</div>
+            </div>
+            <span class="username" id="main-username">Увійти</span>
+        </a>
+    </div>
+
+    <div class="status-circles">
+        <a href="index.html" class="sidebar-menu-btn" style="text-decoration: none;">
+            <span>🏠 Головна</span>
+        </a>
+
+        <div class="sidebar-menu-btn toggle-wrapper" id="theme-toggle-btn">
+            <span id="theme-icon">🌙 Тема</span>
+            <div class="toggle-switch"></div>
+        </div>
+
+        <div class="sidebar-menu-btn toggle-wrapper active-toggle" id="chat-toggle-btn">
+            <span>🤖 Кіно-Гід</span>
+            <div class="toggle-switch"></div>
+        </div>
+    </div>
+
+    <div class="movie-container">
+        <div class="earn-hub">
+            <h1 style="color: #ffd700; margin-top: 0;">💎 Заробіток монет</h1>
+            <p style="opacity: 0.8; margin-bottom: 30px;">Виконуй прості завдання та купуй круті аватарки!</p>
+            
+            <div class="task-card">
+                <div style="text-align: left;">
+                    <h3 style="margin: 0 0 5px 0;">🍿 Перегляд реклами</h3>
+                    <small style="opacity: 0.6;">Подивись коротке відео й отримай +50 монет</small>
+                </div>
+                <button class="earn-btn" onclick="watchAd(this)">Дивитись</button>
+            </div>
+
+            <div class="task-card">
+                <div style="text-align: left;">
+                    <h3 style="margin: 0 0 5px 0;">🎁 Щоденний бонус</h3>
+                    <small style="opacity: 0.6;">Забирай безкоштовні 100 монет кожні 24 години</small>
+                </div>
+                <button class="earn-btn" id="daily-btn" onclick="claimDailyBonus(this)">Забрати 100</button>
+            </div>
+
+            <div id="status-msg" style="color: #48bb78; font-weight: bold; margin-top: 20px; min-height: 20px;"></div>
+        </div>
+    </div>
+
+    <div class="chat-sidebar" style="display: flex;">
+        <div class="chat-header">
+            <h3 class="chat-title">AI Кіно-Гід</h3>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="aiToggleBtn" class="header-icon-btn" title="AI Фільтр: ВИМКНЕНО">🤖</button>
+                <button id="pin-chat-btn" class="header-icon-btn" title="Відкріпити чат">🔓</button>
+                <button id="close-chat-btn" class="header-icon-btn close-btn-chat" title="Закрити чат">&times;</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Напиши запит...">
+            <button id="send-btn">➤</button>
+        </div>
+    </div>
+
+    <script>
+        if (!document.getElementById('carousel')) {
+            const d = document.createElement('div'); d.id = 'carousel'; d.style.display = 'none'; document.body.appendChild(d);
+        }
+        if (!document.getElementById('movie-list')) {
+            const d = document.createElement('div'); d.id = 'movie-list'; d.style.display = 'none'; document.body.appendChild(d);
+        }
+        if (!document.getElementById('pagination-container')) {
+            const d = document.createElement('div'); d.id = 'pagination-container'; d.style.display = 'none'; document.body.appendChild(d);
+        }
+    </script>
+
+    <script src="s1.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    checkDailyCooldown();
+});
+
+// Функція сповіщення
+function showStatus(text) {
+    const msg = document.getElementById('status-msg');
+    if (msg) {
+        msg.innerText = text;
+        setTimeout(() => msg.innerText = '', 4000);
+    }
+}
+
+// Реклама (асинхронна версія)
+async function watchAd(btn) {
+    btn.disabled = true;
+    let time = 15;
+    const oldText = btn.innerText;
+
+    const timer = setInterval(async () => {
+        btn.innerText = `Чекайте ${time}с`;
+        time--;
+
+        if (time < 0) {
+            clearInterval(timer);
+            
+            // Зберігаємо в хмару
+            await addCoinsToCloud(50); 
+            
+            btn.innerText = oldText;
+            btn.disabled = false;
+            showStatus('✅ Отримано +50 монет!');
+        }
+    }, 1000);
+}
+
+// Щоденний бонус (асинхронна версія)
+async function claimDailyBonus(btn) {
+    // Зберігаємо в хмару
+    await addCoinsToCloud(100); 
+    
+    localStorage.setItem('lastDailyBonusTime', Date.now());
+    btn.disabled = true;
+    btn.innerText = 'Отримано';
+    showStatus('🎉 Щоденний бонус 100 монет зараховано!');
+}
+
+// Перевірка часу для бонусу
+function checkDailyCooldown() {
+    const lastClaim = localStorage.getItem('lastDailyBonusTime');
+    const btn = document.getElementById('daily-btn');
+    if (lastClaim && (Date.now() - lastClaim < 86400000)) {
+        if (btn) {
+            btn.disabled = true;
+            btn.innerText = 'Отримано';
+        }
+    }
+}
+    </script>
+    <script src="s1.js"></script>
+</body>
+</html>

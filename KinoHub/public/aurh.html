@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoHub - Авторизація</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* ТЕМНА ТЕМА (Стандартна за замовчуванням) */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            background: url('https://img3.akspic.ru/crops/4/2/5/4524/4524-nochnoe_nebo-zvezdnaya_noch-zvezdy-noch-astronomicheskij_obekt-1920x1080.jpg') center center / cover no-repeat;
+        }
+
+        /* --- СВІТЛА ТЕМА (Активується автоматично через скрипт) --- */
+        body.light-theme {
+            /* Тут встановлено світлу фонову картинку замість простого білого кольору */
+            background: url('https://images.wallpaperscraft.ru/image/single/oblaka_nebo_den_172438_3840x2160.jpg') center center / cover no-repeat;
+            color: #1a2233;
+        }
+
+        /* Кнопка "Назад" */
+        .back-login-btn {
+            position: absolute;
+            top: 40px;  
+            left: 40px; 
+            z-index: 1000;
+            padding: 10px 20px;
+            background-color: #1a2233;
+            border: 1px solid #4a90e2;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .back-login-btn:hover {
+            background-color: #4a90e2;
+        }
+
+        body.light-theme .back-login-btn {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1a2233;
+        }
+
+        body.light-theme .back-login-btn:hover {
+            background-color: #e2e8f0;
+            border-color: #4a90e2;
+        }
+
+        /* Контейнер форми */
+        .login-box { 
+            background: #1a2233; 
+            padding: 30px; 
+            border-radius: 15px; 
+            border: 1px solid #4a90e2; 
+            text-align: center; 
+            width: 330px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-theme .login-box {
+            background: rgba(255, 255, 255, 0.95); /* Напівпрозора біла плашка, щоб текст добре читався на картинці */
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Поля введення */
+        .login-box input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border-radius: 6px; 
+            border: 1px solid #4a90e2;
+            background: #0a0f1e; 
+            color: white;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .login-box input:focus {
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.6);
+        }
+
+        body.light-theme .login-box input {
+            background: #f8fafc;
+            color: #1a2233;
+            border: 1px solid #cbd5e1;
+        }
+
+        body.light-theme .login-box input:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+        }
+
+        body.light-theme .login-box input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Головна кнопка */
+        .login-box button {
+            width: 100%; 
+            padding: 12px; 
+            background: #4a90e2;
+            border: none; 
+            color: white; 
+            border-radius: 6px; 
+            cursor: pointer;
+            font-weight: bold; 
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .login-box button:hover {
+            background: #357abd;
+        }
+
+        /* Посилання для перемикання режимів */
+        .switch-text {
+            font-size: 14px;
+            color: #b0c4de;
+        }
+
+        body.light-theme .switch-text {
+            color: #64748b;
+        }
+
+        .switch-link {
+            color: #4a90e2; 
+            cursor: pointer; 
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        body.light-theme .switch-link {
+            color: #3b82f6;
+        }
+
+        /* Блоки сповіщень */
+        #errorBox, #successBox {
+            display: none;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        #errorBox { 
+            background: rgba(231, 76, 60, 0.2); 
+            color: #e74c3c; 
+            border: 1px solid #e74c3c; 
+        }
+
+        body.light-theme #errorBox { 
+            background: #fde8e8; 
+            color: #9b1c1c; 
+            border: 1px solid #f8b4b4; 
+        }
+
+        #successBox { 
+            background: rgba(46, 204, 113, 0.2); 
+            color: #2ecc71; 
+            border: 1px solid #2ecc71; 
+        }
+
+        body.light-theme #successBox { 
+            background: #def7ec; 
+            color: #03543f; 
+            border: 1px solid #bfefc4; 
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        if (localStorage.getItem('light_theme') === 'true') {
+            document.body.classList.add('light-theme');
+        }
+    </script>
+
+    <a href="index.html" class="back-login-btn">← На головну</a>
+
+    <div class="login-box">
+        <h2 id="form-title">Вхід у систему</h2>
+        
+        <div id="errorBox"></div>
+        <div id="successBox"></div>
+
+        <form id="auth-form" onsubmit="handleAuth(event)">
+            <input type="text" id="username" placeholder="Введіть логін" required>
+            <input type="password" id="password" placeholder="Введіть пароль" required>
+            <button type="submit" id="submit-btn">Увійти</button>
+        </form>
+
+        <p class="switch-text">
+            <span id="switch-prompt">Немає акаунту?</span> 
+            <span class="switch-link" id="switch-btn" onclick="toggleMode()">Зареєструватися</span>
+        </p>
+    </div>
+
+    <script>
+        const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq';
+const USERS_BIN_ID = '6a2da741da38895dfebb4bcf';
+let currentMode = "login";
+
+function toggleMode() {
+    const errorBox = document.getElementById("errorBox");
+    const successBox = document.getElementById("successBox");
+    const formTitle = document.getElementById("form-title");
+    const submitBtn = document.getElementById("submit-btn");
+    const switchPrompt = document.getElementById("switch-prompt");
+    const switchBtn = document.getElementById("switch-btn");
+
+    errorBox.style.display = "none";
+    successBox.style.display = "none";
+
+    if (currentMode === "login") {
+        currentMode = "register";
+        formTitle.textContent = "Реєстрація";
+        submitBtn.textContent = "Створити акаунт";
+        switchPrompt.textContent = "Вже є профіль?";
+        switchBtn.textContent = "Увійти";
+    } else {
+        currentMode = "login";
+        formTitle.textContent = "Вхід у систему";
+        submitBtn.textContent = "Увійти";
+        switchPrompt.textContent = "Немає акаунту?";
+        switchBtn.textContent = "Зареєструватися";
+    }
+}
+
+async function handleAuth(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const errorBox = document.getElementById("errorBox");
+    const successBox = document.getElementById("successBox");
+
+    errorBox.style.display = "none";
+    successBox.style.display = "none";
+
+    try {
+        // 1. Отримуємо базу користувачів з JSONBin
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': CLOUD_API_KEY, 'Cache-Control': 'no-cache' }
+        });
+        const data = await response.json();
+        let users = data.record;
+
+        if (currentMode === "register") {
+            // === Логіка реєстрації ===
+            if (users[username]) {
+                showError("Користувач з таким ім'ям вже існує!");
+                return;
+            }
+
+            // Додаємо нового користувача
+            users[username] = {
+                password: password,
+                balance: 0,
+                avatar: "https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg",
+                inventory: []
+            };
+
+            // Оновлюємо базу в хмарі
+            await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'X-Master-Key': CLOUD_API_KEY 
+                },
+                body: JSON.stringify(users)
+            });
+
+            showSuccess("Реєстрація успішна! Тепер ви можете увійти.");
+            toggleMode(); // Перемикаємо на вхід
+            document.getElementById("password").value = ""; 
+
+        } else {
+            // === Логіка входу ===
+            if (users[username] && users[username].password === password) {
+                sessionStorage.setItem("secureUser", username);
+                window.location.href = "index.html"; // або profile.html
+            } else {
+                showError("Невірний логін або пароль.");
+            }
+        }
+
+    } catch (err) {
+        console.error(err);
+        showError("Помилка зв'язку з хмарою. Перевірте інтернет.");
+    }
+}
+
+function showError(text) {
+    const box = document.getElementById("errorBox");
+    box.style.display = "block";
+    box.textContent = text;
+}
+
+function showSuccess(text) {
+    const box = document.getElementById("successBox");
+    box.style.display = "block";
+    box.textContent = text;
+}
+    </script>
+</body>
+</html>

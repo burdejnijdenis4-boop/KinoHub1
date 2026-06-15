@@ -1,0 +1,49 @@
+{
+  "Denis": {
+    "password": "67",
+    "balance": 50000,
+    "avatar": "https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg",
+    "banner": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800",
+    "inventory": [
+      {
+        "id": 1,
+        "name": "Шпалери: Неон",
+        "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800"
+      },
+      {
+        "id": 2,
+        "name": "Шпалери: Градієнт",
+        "url": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800"
+      }
+    ]
+  },
+  "аеан": {
+    "password": "Dssakj(%%hdnIIO87$^",
+    "balance": 50000,
+    "avatar": "https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg",
+    "banner": "linear-gradient(90deg, #2c3e50, #3498db)",
+    "inventory": [
+      {
+        "id": 1,
+        "name": "Шпалери: Неон",
+        "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800"
+      },
+      {
+        "id": 2,
+        "name": "Шпалери: Градієнт",
+        "url": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800"
+      }
+    ]
+  },
+  "цукц4": {
+    "password": "d)(Fdklmksmlm*(*Udn(*usa9i90sjfksm",
+    "balance": 50000,
+    "avatar": "https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg",
+    "inventory": []
+  },
+  "desdfs": {
+    "password": "qwertyuiop[]Q123",
+    "balance": 50000,
+    "inventory": []
+  }
+}

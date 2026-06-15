@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoHub - Бібліотека</title>
+    <link rel="stylesheet" href="s1.css">
+    <style>
+        /* Локальні стилі для правильного відступу контенту */
+        body {
+            display: block; 
+            min-height: 100vh;
+            padding: 120px 40px 60px 40px; 
+            box-sizing: border-box;
+        }
+
+        .library-main-header {
+            max-width: 800px; /* Зробив ширину як на головній сторінці */
+            margin: 0 auto 40px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
+
+        body.light-theme .library-main-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .library-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .library-section {
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+        }
+
+        .library-section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        body.light-theme .library-section-title {
+            color: #333333;
+        }
+
+        .empty-placeholder {
+            opacity: 0.6;
+            font-style: italic;
+            padding: 20px 0;
+            color: #ffffff;
+            text-align: center;
+            font-size: 1.1rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        
+        body.light-theme .empty-placeholder {
+            color: #666666;
+            background: rgba(0,0,0,0.05);
+        }
+        
+        /* Використовуємо такий самий flex-контейнер як для каталогу на головній */
+        .movie-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body class="shop-body">
+
+    <div class="currency-container">
+        <a href="earn.html" class="currency-link">
+            <div class="currency-item">
+                <img src="завантаження.png" alt="coin" class="coin-icon">
+                <span id="balance">1,250</span>
+            </div>
+        </a>
+        <a href="admin.html" title="Увійти в Панель Адміністратора" style="margin-left: 10px; font-size: 22px; text-decoration: none; transition: transform 0.3s ease; display: flex; align-items: center;" onmouseover="this.style.transform='rotate(90deg)'" onmouseout="this.style.transform='rotate(0deg)'">⚙️</a>
+    </div>
+
+    <div class="profile-section">
+        <a href="#" onclick="handleProfileClick(event)" class="profile-link">
+            <div class="avatar-wrapper">
+                <img src="https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg" alt="User Avatar" id="user-avatar">
+                <div class="edit-badge">✎</div>
+            </div>
+            <span class="username" id="main-username">Увійти</span>
+        </a>
+    </div>
+
+    <div class="status-circles">
+        <a href="libery.html" class="sidebar-menu-btn active-toggle" style="text-decoration: none; justify-content: center; display: flex; align-items: center; color: inherit;">
+            <span>📚 Бібліотека</span>
+        </a>
+
+        <div class="sidebar-menu-btn toggle-wrapper" id="theme-toggle-btn">
+            <span id="theme-icon">🌙 Тема</span>
+            <div class="toggle-switch"></div>
+        </div>
+
+        <div class="sidebar-menu-btn toggle-wrapper active-toggle" id="chat-toggle-btn">
+            <span>🤖 Кіно-Гід</span>
+            <div class="toggle-switch"></div>
+        </div>
+    </div>
+    
+    <div class="chat-sidebar">
+        <div class="chat-header">
+            <h3 class="chat-title">AI Кіно-Гід</h3>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="aiToggleBtn" class="header-icon-btn" title="AI Фільтр: ВИМКНЕНО">🤖</button>
+                <button id="pin-chat-btn" class="header-icon-btn" title="Відкріпити чат">🔓</button>
+                <button id="close-chat-btn" class="header-icon-btn close-btn-chat" title="Закрити чат">&times;</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="bot-message">Привіт! Який фильм знайти? (Натисни 🤖, щоб я шукав у базі)</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Напиши запит...">
+            <button id="send-btn">➤</button>
+        </div>
+    </div>
+
+    <div class="library-main-header">
+        <div class="library-title">🍿 Моя Бібліотека</div>
+        <a href="index.html" class="apply-filters-btn" style="text-decoration: none; display: inline-block; text-align: center; width: auto; padding: 10px 20px; margin: 0; font-size: 14px;">← На головну</a>
+    </div>
+
+    <div class="library-section">
+        <div class="library-section-title">⏳ Подивитися пізніше</div>
+        <div id="library-watch-later-list" class="movie-list-container">
+            <div class="empty-placeholder">Завантаження даних з хмари...</div>
+        </div>
+    </div>
+
+    <script src="s1.js"></script>
+
+    <script>
+        async function initLibrary() {
+            const container = document.getElementById('library-watch-later-list');
+            const currentUser = sessionStorage.getItem('secureUser');
+
+            // 1. Перевірка авторизації
+            if (!currentUser) {
+                container.innerHTML = '<div class="empty-placeholder">Увійдіть в акаунт, щоб бачити збережені фільми.</div>';
+                return;
+            }
+
+            try {
+                // 2. Переконуємось, що база фільмів завантажена (викликаємо з s1.js)
+                if (moviesDatabase.length === 0) {
+                    await loadMoviesFromJSON(); 
+                }
+
+                // 3. Завантажуємо профіль користувача з хмари (JSONBin)
+                const users = await loadUsersFromCloud();
+                
+                // Якщо в профілі ще немає масиву watchLater, або він пустий
+                if (!users || !users[currentUser] || !users[currentUser].watchLater || users[currentUser].watchLater.length === 0) {
+                    container.innerHTML = '<div class="empty-placeholder">Список "Подивитися пізніше" порожній.<br>Знайди цікавий фільм на головній та натисни на ⭐!</div>';
+                    return;
+                }
+
+                const watchLaterIds = users[currentUser].watchLater;
+                
+                // 4. Шукаємо в базі даних ті фільми, ID яких є у списку користувача
+                const savedMovies = moviesDatabase.filter(m => watchLaterIds.includes(m.id) || watchLaterIds.includes(String(m.id)));
+
+                if (savedMovies.length === 0) {
+                    container.innerHTML = '<div class="empty-placeholder">Фільми не знайдені в поточній базі.</div>';
+                    return;
+                }
+
+                // 5. Малюємо картки фільмів
+                container.innerHTML = savedMovies.map(m => {
+                    const ratingVal = parseFloat(m.rating) || 0; 
+                    const filledStars = Math.round(ratingVal); 
+                    const emptyStars = 10 - filledStars; 
+                    const starsHtml = '★'.repeat(filledStars) + '☆'.repeat(emptyStars > 0 ? emptyStars : 0);
+                    
+                    return `
+                    <div class="kinokrad-card" onclick="window.location.href='movie.html?id=${m.id || 0}'" style="cursor:pointer; position: relative;">
+                        <span class="star-badge active" onclick="event.stopPropagation(); toggleWatchLater(${m.id}, this); setTimeout(initLibrary, 500);" style="position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 24px; color: gold; background: rgba(0,0,0,0.7); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s;">⭐</span>
+                        
+                        <img src="${m.img}" class="kinokrad-poster" alt="${m.title}">
+                        <div class="kinokrad-info">
+                            <h3>${m.title}</h3>
+                            <div class="stars" style="color: #f1c40f; margin: 5px 0;">
+                                ${starsHtml} <span style="font-size: 12px; color: #888;">(${ratingVal}/10)</span>
+                            </div>
+                            <div class="kinokrad-meta">
+                                <div><b>Якість:</b> ${m.quality || 'Невідомо'}</div>
+                                <div><b>Рік:</b> ${m.year || 'Невідомо'}</div>
+                                <div><b>Жанр:</b> ${m.genre || 'Невідомо'}</div>
+                            </div>
+                            <p class="kinokrad-desc">${m.desc || ''}</p>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error("Помилка завантаження бібліотеки:", err);
+                container.innerHTML = '<div class="empty-placeholder">Сталася помилка при завантаженні бази даних.</div>';
+            }
+        }
+
+        // Даємо браузеру секунду, щоб s1.js завантажився та запустився, а потім малюємо бібліотеку
+        setTimeout(initLibrary, 800);
+    </script>
+</body>
+</html>

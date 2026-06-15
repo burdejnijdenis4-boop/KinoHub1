@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoHub - Профіль</title>
+    <link rel="stylesheet" href="s1.css">
+    
+    <style>
+        /* === ГОЛОВНІ СТИЛІ ПРОФІЛЮ ТА АДАПТАЦІЯ ТЕМИ === */
+        body {
+            display: block; 
+            min-height: 100vh;
+            padding: 0; 
+            margin: 0;
+            box-sizing: border-box;
+            transition: background 0.3s ease, color 0.3s ease;
+            position: relative;
+            background-color: #0a0f1e; 
+            background-image: linear-gradient(135deg, rgba(20, 25, 40, 0.95), rgba(10, 15, 30, 0.98));
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #ffffff;
+        }
+
+        body.light-theme {
+            background-color: #f1f5f9;
+            background-image: linear-gradient(135deg, rgba(241, 245, 249, 0.95), rgba(226, 232, 240, 0.98));
+            color: #1a2233;
+        }
+
+        .profile-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .navigation-back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            transition: color 0.3s, transform 0.2s;
+            z-index: 10;
+        }
+
+        .navigation-back-link:hover { color: #ffffff; transform: translateX(-3px); }
+        body.light-theme .navigation-back-link { color: #1a2233; }
+
+        /* ==========================================================
+           1. БАННЕР ПРОФІЛЮ (Жовта область - Аватарка повністю всередині)
+           ========================================================== */
+        .profile-header-banner {
+            width: 100%;
+            height: 270px;
+            border-radius: 20px;
+            margin-top: 40px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 1;
+            background-image: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800'); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        body.light-theme .profile-header-banner {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* АВАТАРКА (Зелена область - Піднята всередину банера, не торкається країв) */
+        .profile-avatar-wrapper {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 25px; /* Припіднята від нижнього краю шпалер */
+            left: 40px;  /* Відступ від лівого краю */
+            cursor: pointer;
+            overflow: hidden;
+            background: #1a2233;
+            border: 4px solid rgba(255, 255, 255, 0.2); 
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-avatar-wrapper:hover {
+            transform: scale(1.05);
+            border-color: #ffd700;
+            box-shadow: 0 5px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .profile-avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .avatar-hover-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffd700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .profile-avatar-wrapper:hover .avatar-hover-overlay { opacity: 1; }
+        .custom-render-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .custom-render-container svg { width: 100%; height: 100%; }
+
+        /* ==========================================================
+           2. КАРТКА КОРИСТУВАЧА (Нік зміщено лівіше)
+           ========================================================== */
+        .profile-card {
+            background: rgba(20, 25, 40, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px 35px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+        }
+
+        body.light-theme .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .profile-info-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 10px; /* Нік та інформація сильно посунуті лівіше */
+        }
+
+        .profile-username {
+            font-size: 28px;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        body.light-theme .profile-username { color: #1a2233; }
+
+        /* ВИПАДАЮЧИЙ СПИСОК СТАТУСІВ */
+        .profile-status-tag {
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-select-dropdown {
+            background: rgba(255, 255, 255, 0.07);
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .status-select-dropdown option {
+            background: #0e1726;
+            color: #ffffff;
+        }
+
+        body.light-theme .status-select-dropdown {
+            background: #ffffff;
+            color: #1a2233;
+            border-color: #cbd5e1;
+        }
+        body.light-theme .status-select-dropdown option {
+            background: #ffffff;
+            color: #1a2233;
+        }
+
+        .status-select-dropdown:hover {
+            border-color: #ffd700;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+        }
+
+        .profile-coin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 12px;
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .profile-coin-icon { width: 22px; height: 22px; object-fit: contain; }
+
+        .btn-exit-hub {
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #e74c3c;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 15px;
+        }
+
+        .btn-exit-hub:hover { background: #e74c3c; color: white; transform: translateY(-2px); }
+
+        /* ==========================================================
+           3. ІНВЕНТАР ТА МАГАЗИН (Блакитна область - 3 ряди / 15 карток)
+           ========================================================== */
+        .profile-inventory-section {
+            width: 100%;
+            margin-top: 30px;
+            background: rgba(20, 25, 40, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px 35px;
+            box-sizing: border-box;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            z-index: 1;
+        }
+
+        body.light-theme .profile-inventory-section {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: #cbd5e1;
+        }
+
+        .inventory-header {
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+        }
+
+        .inventory-title {
+            font-size: 20px;
+            color: #e2e8f0;
+            font-weight: 600;
+            margin: 0;
+        }
+        body.light-theme .inventory-title { color: #333; }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .inventory-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        body.light-theme .inventory-card {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .inventory-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-4px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.15);
+        }
+
+        .item-preview-img {
+            width: 100%;
+            height: 95px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body.light-theme .item-preview-img { border-bottom-color: rgba(0, 0, 0, 0.08); }
+
+        /* Контейнер для одноколірних безкоштовних прев'ю */
+        .color-preview-block {
+            width: 100%;
+            height: 95px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .item-info { padding: 12px; }
+
+        .item-name {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin: 0 0 10px 0;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        body.light-theme .item-name { color: #555; }
+
+        .btn-install-item {
+            width: 100%;
+            padding: 8px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-install-item:hover { background: #357abd; }
+    </style>
+</head>
+<body>
+
+    <div class="profile-wrapper">
+        
+        <a href="index.html" class="navigation-back-link">❮ На головну</a>
+
+        <div id="profile-header-banner" class="profile-header-banner">
+            <div class="profile-avatar-wrapper" onclick="window.location.href='avatars.html'" title="Змінити аватар">
+                <div id="profile-avatar-container" class="custom-render-container">
+                    <img id="profile-avatar-img" src="https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg" alt="User Avatar">
+                </div>
+                <div class="avatar-hover-overlay">
+                    <span>Змінити</span>
+                    <span style="font-size: 16px; margin-top: 4px;">🔄</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-info-block">
+                <div id="profile-username" class="profile-username">Глядач</div>
+                
+                <div class="profile-status-tag">
+                    <span>🔥</span> Статус: 
+                    <select id="profile-status-select" class="status-select-dropdown" onchange="handleStatusChange(this.value)">
+                        <option value="Кіноман">Кіноман</option>
+                        <option value="Критик">Критик</option>
+                        <option value="Режисер">Режисер</option>
+                        <option value="Попкорноїд">Попкорноїд</option>
+                        <option value="Серіальний Гуру">Серіальний Гуру</option>
+                        <option value="VIP Глядач">VIP Глядач</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center;">
+                <div class="profile-coin-badge" title="Твій баланс монет">
+                    <img src="завантаження.png" alt="coin" class="profile-coin-icon">
+                    <span id="profile-balance-value">0</span>
+                </div>
+                <button onclick="handleLogout()" class="btn-exit-hub">🚪 Вийти</button>
+            </div>
+        </div>
+
+        <div class="profile-inventory-section">
+            <div class="inventory-header">
+                <h3 class="inventory-title">🛍️ Сховище тем та шпалер сайту</h3>
+            </div>
+            
+            <div id="inventory-grid-container" class="inventory-grid">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq'; 
+        const USERS_BIN_ID = '6a2da741da38895dfebb4bcf'; 
+
+        // 5 Безкоштовних красивих ніжних кольорів
+        const freeItems = [
+            { id: 1, name: "Ніжно-Рожевий", url: "#ffb7c5" },
+            { id: 2, name: "М'який Блакитний", url: "#a0c4ff" },
+            { id: 3, name: "Пастельний Салатовий", url: "#b9fbc0" },
+            { id: 4, name: "Лавандовий", url: "#e8c1ff" },
+            { id: 5, name: "Персиковий", url: "#ffd6a5" }
+        ];
+
+        // 10 Платних преміум шпалер (2 додаткові ряди)
+        const premiumItems = [
+            { id: 6, name: "Шпалери: Кіберпанк", url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800", price: 1000 },
+            { id: 7, name: "Шпалери: Ретро-вейв", url: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800", price: 1200 },
+            { id: 8, name: "Шпалери: Попкорн", url: "https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=800", price: 800 },
+            { id: 9, name: "Шпалери: Кінострічка", url: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800", price: 1500 },
+            { id: 10, name: "Шпалери: Золотий VIP", url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800", price: 5000 },
+            { id: 11, name: "Шпалери: Магія неону", url: "https://images.unsplash.com/photo-1547394765-185e1e68f34e?w=800", price: 2000 },
+            { id: 12, name: "Шпалери: Мінімалізм", url: "https://images.unsplash.com/photo-1618005198143-e5283b519a7f?w=800", price: 600 },
+            { id: 13, name: "Шпалери: Нічне кіно", url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800", price: 1100 },
+            { id: 14, name: "Шпалери: Аніме Світ", url: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800", price: 1800 },
+            { id: 15, name: "Шпалери: Темний лицар", url: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800", price: 2500 }
+        ];
+
+        const allMarketItems = [...freeItems, ...premiumItems];
+
+        async function loadUsersFromCloud() {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': CLOUD_API_KEY, 'Cache-Control': 'no-cache' }
+                });
+                const result = await response.json();
+                return result.record; 
+            } catch (err) {
+                console.error(err);
+                return null;
+            }
+        }
+
+        async function saveUsersToCloud(data) {
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': CLOUD_API_KEY },
+                    body: JSON.stringify(data)
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        async function loadProfileData() {
+            const currentUser = sessionStorage.getItem("secureUser");
+            if (!currentUser) {
+                window.location.href = "aurh.html"; 
+                return;
+            }
+            document.getElementById("profile-username").innerText = currentUser;
+
+            // Завантаження локального балансу користувача
+            const balance = localStorage.getItem("userBalance") || "10";
+            document.getElementById("profile-balance-value").innerText = Number(balance).toLocaleString();
+
+            loadAvatar(localStorage.getItem("selectedAvatar"));
+
+            // Синхронізація з хмарою
+            const users = await loadUsersFromCloud();
+            if (users && users[currentUser]) {
+                const userData = users[currentUser];
+                
+                // Встановлення статусу з бази (якщо немає - Кіноман)
+                const currentStatus = userData.status || "Кіноман";
+                document.getElementById("profile-status-select").value = currentStatus;
+
+                // Оновлення балансу з хмари
+                if(userData.balance !== undefined) {
+                    localStorage.setItem("userBalance", userData.balance);
+                    document.getElementById("profile-balance-value").innerText = Number(userData.balance).toLocaleString();
+                }
+
+                applyProfileBannerToDOM(userData.banner);
+                renderInventory(userData.banner, userData.inventory || []);
+            } else {
+                renderInventory(null, []);
+            }
+        }
+
+        function renderInventory(activeBannerUrl, ownedInventory) {
+            const container = document.getElementById('inventory-grid-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            allMarketItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'inventory-card';
+                
+                // Перевірка типу відображення (Колір чи Картинка)
+                let previewHTML = '';
+                if (item.url.startsWith('#')) {
+                    previewHTML = `<div class="color-preview-block" style="background-color: ${item.url};"></div>`;
+                } else {
+                    previewHTML = `<img src="${item.url}" alt="${item.name}" class="item-preview-img">`;
+                }
+
+                // Перевірка власності
+                const isFree = !item.price;
+                const isOwned = isFree || ownedInventory.some(owned => owned.id === item.id);
+                const isActive = activeBannerUrl === item.url;
+
+                let buttonHTML = '';
+                if (isActive) {
+                    buttonHTML = `<button class="btn-install-item" style="background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid #ffd700; pointer-events: none;">Встановлено</button>`;
+                } else if (isOwned) {
+                    buttonHTML = `<button onclick="equipBanner('${item.url}')" class="btn-install-item">Встановити</button>`;
+                } else {
+                    buttonHTML = `<button onclick="buyPremiumItem(${item.id}, ${item.price}, '${item.name}', '${item.url}')" class="btn-install-item" style="background: #27ae60;">Купити (${item.price} 🪙)</button>`;
+                }
+
+                card.innerHTML = `
+                    ${previewHTML}
+                    <div class="item-info">
+                        <div class="item-name" title="${item.name}">${item.name}</div>
+                        ${buttonHTML}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function equipBanner(bannerUrl) {
+            const username = sessionStorage.getItem("secureUser");
+            if (!username) return;
+
+            applyProfileBannerToDOM(bannerUrl);
+
+            try {
+                const users = await loadUsersFromCloud();
+                if (users && users[username]) {
+                    users[username].banner = bannerUrl;
+                    await saveUsersToCloud(users);
+                    renderInventory(bannerUrl, users[username].inventory || []);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function buyPremiumItem(id, price, name, url) {
+            const username = sessionStorage.getItem("secureUser");
+            if (!username) return;
+
+            let balance = Number(localStorage.getItem("userBalance") || "10");
+            if (balance < price) {
+                alert("❌ У вас недостатньо монет!");
+                return;
+            }
+
+            if (!confirm(`Бажаєте придбати "${name}" за ${price} монет?`)) return;
+
+            try {
+                const users = await loadUsersFromCloud();
+                if (users && users[username]) {
+                    let cloudBalance = users[username].balance !== undefined ? users[username].balance : 10;
+                    
+                    cloudBalance -= price;
+                    users[username].balance = cloudBalance;
+                    localStorage.setItem("userBalance", cloudBalance);
+                    document.getElementById("profile-balance-value").innerText = cloudBalance.toLocaleString();
+
+                    if (!users[username].inventory) users[username].inventory = [];
+                    users[username].inventory.push({ id, name, url });
+                    
+                    users[username].banner = url; // Авто-встановлення після купівлі
+                    await saveUsersToCloud(users);
+
+                    applyProfileBannerToDOM(url);
+                    renderInventory(url, users[username].inventory);
+                    alert(`🎉 Тему "${name}" успішно куплено та встановлено!`);
+                }
+            } catch (err) { alert("Сталася помилка при купівлі."); }
+        }
+
+        async function handleStatusChange(newStatus) {
+            const username = sessionStorage.getItem("secureUser");
+            if (!username) return;
+
+            try {
+                const users = await loadUsersFromCloud();
+                if (users && users[username]) {
+                    users[username].status = newStatus;
+                    await saveUsersToCloud(users);
+                    console.log("Новий статус збережено в хмару:", newStatus);
+                }
+            } catch (err) { console.error("Помилка збереження статусу:", err); }
+        }
+
+        function applyProfileBannerToDOM(bannerUrl) {
+            const bannerEl = document.getElementById('profile-header-banner');
+            if (!bannerEl) return;
+
+            if (bannerUrl && bannerUrl.startsWith('#')) {
+                bannerEl.style.backgroundImage = 'none';
+                bannerEl.style.backgroundColor = bannerUrl;
+            } else if (bannerUrl) {
+                bannerEl.style.backgroundImage = `url(${bannerUrl})`;
+                bannerEl.style.backgroundColor = 'transparent';
+            }
+        }
+
+        function loadAvatar(selectedAvatar) {
+            const avatarContainer = document.getElementById("profile-avatar-container");
+            if (!avatarContainer) return;
+
+            if (selectedAvatar) {
+                if (selectedAvatar.startsWith('linear-gradient') || selectedAvatar.startsWith('#')) {
+                    avatarContainer.innerHTML = '';
+                    avatarContainer.style.background = selectedAvatar;
+                } else if (selectedAvatar.startsWith('flag:')) {
+                    renderFlagSVG(selectedAvatar, avatarContainer);
+                } else {
+                    avatarContainer.innerHTML = `<img id="profile-avatar-img" src="${selectedAvatar}" alt="User Avatar">`;
+                    avatarContainer.style.background = 'transparent';
+                }
+            }
+        }
+
+        function renderFlagSVG(flagCode, container) {
+            const code = flagCode.replace('flag:', '');
+            let svgContent = '';
+            if (code === 'ua') svgContent = '<svg viewBox="0 0 3 2" preserveAspectRatio="none"><rect width="3" height="1" fill="#0057B7"/><rect y="1" width="3" height="1" fill="#FFD700"/></svg>';
+            else if (code === 'us') svgContent = '<svg viewBox="0 0 19 10" preserveAspectRatio="none"><rect width="19" height="10" fill="#B22234"/><path d="M0,0 H7.6 V5.38 H0 Z" fill="#3C3B6E"/></svg>';
+            else if (code === 'pl') svgContent = '<svg viewBox="0 0 8 5" preserveAspectRatio="none"><rect width="8" height="2.5" fill="#FFF"/><rect y="2.5" width="8" height="2.5" fill="#DC143C"/></svg>';
+            else svgContent = '<img id="profile-avatar-img" src="https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg">';
+            container.innerHTML = svgContent;
+            container.style.background = 'transparent';
+        }
+
+        function handleLogout() {
+            if (confirm("Ви впевнені, що хочете вийти з профілю?")) {
+                sessionStorage.removeItem("secureUser");
+                window.location.href = "index.html"; 
+            }
+        }
+
+        function checkGlobalTheme() {
+            if (localStorage.getItem('light_theme') === 'true') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            checkGlobalTheme();
+            loadProfileData();
+        });
+    </script>
+    <script src="s1.js"></script>
+</body>
+</html>

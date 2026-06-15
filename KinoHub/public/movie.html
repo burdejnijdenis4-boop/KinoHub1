@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoHub - Перегляд фільму</title>
+    <link rel="stylesheet" href="s1.css">
+    <style>
+
+        /* === ДОДАТКОВІ ФІКСИ ДРІБНИХ ТЕМНИХ ЕЛЕМЕНТІВ === */
+        
+        /* 1. Теги під заголовком (Рік, Жанр, Якість) */
+        body.light-theme .meta-tag {
+            background: #e2e8f0 !important;
+            border-color: #cbd5e1 !important;
+            color: #1e3a8a !important; 
+        }
+
+        /* 2. Випадаючий список вибору якості відео (1080p / 720p) */
+        body.light-theme #quality-selector {
+            background: #ffffff !important;
+            color: #1a2233 !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* 3. Фон самих коментарів та їх текст (перебиваємо скрипт) */
+        body.light-theme #local-comments-list > div {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-left: 4px solid #4a90e2 !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+        }
+        
+        body.light-theme #local-comments-list > div > div:last-child {
+            color: #334155 !important; /* Темно-сірий текст коментаря замість світлого */
+        }
+
+        /* 4. Вікно-заглушка, якщо відеофайл відсутній */
+        body.light-theme #player-container > div[style*="background: #0a0f1e"] {
+            background: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #1e3a8a !important;
+        }
+
+        body.shop-body {
+            display: block !important;
+            min-height: 100vh;
+            padding-top: 100px; 
+            background-attachment: fixed;
+        }
+
+        .movie-page-layout {
+            width: 100%; max-width: 1000px; margin: 0 auto 60px auto;
+            display: flex; flex-direction: column; gap: 30px;
+            padding: 0 20px; box-sizing: border-box; position: relative; z-index: 10;
+        }
+
+        .movie-details-header {
+            display: flex; gap: 30px; background: rgba(20, 25, 40, 0.9);
+            border-radius: 15px; padding: 30px; border: 1px solid #4a90e2;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            transition: all 0.3s ease;
+        }
+        .movie-poster-large {
+            width: 260px; height: 390px; border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5); object-fit: cover;
+            flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .movie-info-text { display: flex; flex-direction: column; gap: 15px; flex: 1; }
+        .movie-info-text h1 { margin: 0; color: #4a90e2; font-size: 2.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .meta-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+        .meta-tag { background: #111; padding: 6px 14px; border-radius: 20px; border: 1px solid #444; font-size: 14px; font-weight: bold; color: #ffd700; }
+        
+        /* === НОВІ СТИЛІ ДЛЯ РЕЙТИНГУ === */
+        .interactive-rating-wrapper {
+            margin-top: 5px; margin-bottom: 5px; display: flex; align-items: center; gap: 15px; 
+            background: rgba(0,0,0,0.3); padding: 12px 20px; border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease; flex-wrap: wrap;
+        }
+        .stars-ui { display: flex; gap: 3px; }
+        .stars-ui span { font-size: 26px; cursor: pointer; transition: transform 0.2s, color 0.2s; color: #555; line-height: 1; }
+        .stars-ui span:hover { transform: scale(1.2); }
+        .rating-text-info { font-size: 15px; color: #ccc; }
+        #avg-rating-text { color: #ffd700; font-weight: bold; font-size: 22px; }
+        #user-vote-msg { font-size: 13px; color: #2ecc71; font-weight: bold; display: none; margin-left: auto; }
+        
+        .movie-desc { font-size: 16px; line-height: 1.6; color: #ccc; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; transition: all 0.3s ease; }
+        .movie-char-list { list-style: none; padding: 0; margin: 0; color: #aaa; font-size: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .movie-char-list span { color: #fff; font-weight: bold; margin-left: 5px; }
+
+        .video-section-wrapper {
+            background: rgba(20, 25, 40, 0.9); padding: 25px; border-radius: 15px;
+            border: 1px solid #4a90e2; width: 100%; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            transition: all 0.3s ease;
+        }
+        .video-player-fixed {
+            width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 10px;
+            display: block; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+
+        .back-link-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1a2233; 
+            border: 1px solid #4a90e2; 
+            color: #ffffff; 
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .back-link-btn:hover {
+            background-color: #1a2233; 
+            color: #ffd700; 
+            border-color: #ffd700; 
+            transform: translateY(-2px);
+        }
+
+        /* =========================================
+           АДАПТАЦІЯ БЛОКІВ ДЛЯ СВІТЛОЇ ТЕМИ
+           ========================================= */
+        body.light-theme .movie-details-header,
+        body.light-theme .video-section-wrapper,
+        body.light-theme .comments-section {
+            background: rgba(240, 244, 248, 0.95) !important;
+            color: #1a2233 !important;
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+        }
+
+        body.light-theme .movie-info-text h1,
+        body.light-theme .video-section-wrapper h2,
+        body.light-theme .comments-section h3 {
+            color: #1e3a8a !important;
+            text-shadow: none !important;
+        }
+
+        body.light-theme .movie-desc {
+            background: rgba(0, 0, 0, 0.05) !important;
+            color: #334155 !important;
+        }
+
+        body.light-theme .movie-char-list,
+        body.light-theme .movie-char-list span {
+            color: #334155 !important;
+        }
+
+        body.light-theme .interactive-rating-wrapper {
+            background: rgba(0, 0, 0, 0.05) !important;
+            border-color: rgba(0,0,0,0.1) !important;
+        }
+        body.light-theme .rating-text-info {
+            color: #555 !important;
+        }
+
+        body.light-theme .video-section-wrapper h2,
+        body.light-theme .comments-section h3 {
+            border-bottom-color: #cbd5e1 !important;
+        }
+
+        body.light-theme #local-comment-input {
+            background: #fff !important;
+            color: #1a2233 !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        @media (max-width: 768px) {
+            .movie-details-header { flex-direction: column; align-items: center; text-align: center; padding: 20px; }
+            .movie-poster-large { width: 100%; max-width: 240px; height: auto; }
+            .meta-tags { justify-content: center; }
+            .interactive-rating-wrapper { justify-content: center; }
+            #user-vote-msg { margin-left: 0; width: 100%; text-align: center; }
+        }
+
+        /* 5. Кнопка "Повернутися на головну" у світлій темі */
+        body.light-theme .back-link-btn {
+            background-color: #ffffff !important; 
+            border-color: #4a90e2 !important; 
+            color: #1a2233 !important; 
+        }
+
+        body.light-theme .back-link-btn:hover {
+            background-color: #4a90e2 !important; 
+            color: #ffffff !important; 
+        }
+    </style>
+</head>
+<body class="shop-body">
+
+    <div class="profile-section">
+        <a href="avatars.html" class="profile-link">
+            <div class="avatar-wrapper">
+                <img src="https://i.pinimg.com/736x/62/e9/ba/62e9ba0691ba8f98b93e397fe14c47de.jpg" alt="User Avatar" id="user-avatar">
+                <div class="edit-badge">✎</div>
+            </div>
+            <span class="username">Аккаунт</span>
+        </a>
+    </div>
+
+    <div class="status-circles">
+        <a href="library.html" class="sidebar-menu-btn" style="text-decoration: none;">
+            <span>📚 Бібліотека</span>
+        </a>
+        <div class="sidebar-menu-btn toggle-wrapper" id="theme-toggle-btn">
+            <span id="theme-icon">🌙 Тема</span>
+            <div class="toggle-switch"></div>
+        </div>
+        <div class="sidebar-menu-btn toggle-wrapper active-toggle" id="chat-toggle-btn">
+            <span>🤖 Кіно-Гід</span>
+            <div class="toggle-switch"></div>
+        </div>
+    </div>
+    
+    <div class="chat-sidebar">
+        <div class="chat-header">
+            <h3 class="chat-title">AI Кіно-Гід</h3>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="aiToggleBtn" class="pin-btn" title="AI Фільтр: ВИМКНЕНО" style="background: none; border: none; font-size: 1.1rem; cursor: pointer;">🤖</button>
+                <button id="pin-chat-btn" class="pin-btn" title="Відкріпити чат">🔓</button>
+                <button id="close-chat-btn" style="background:none; border:none; color:white; font-size:1.6rem; cursor:pointer; line-height:1; padding:0 5px;" title="Закрити чат">&times;</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="bot-message">Привіт! Який фильм знайти? (Натисни 🤖, щоб я шукав у базі)</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Напиши запит...">
+            <button id="send-btn">➤</button>
+        </div>
+    </div>
+
+    <div class="movie-page-layout">
+        <div><a href="index.html" class="back-link-btn"> Повернутися на головну </a></div>
+
+        <div class="movie-details-header">
+            <img src="" alt="Постер" id="poster-img" class="movie-poster-large">
+            <div class="movie-info-text">
+                <h1 id="m-title">Завантаження...</h1>
+                <div class="meta-tags">
+                    <div class="meta-tag" id="m-year-tag">---</div>
+                    <div class="meta-tag" id="m-genre-tag">---</div>
+                    <div class="meta-tag" id="m-quality-tag">1080p</div>
+                </div>
+
+                <div class="interactive-rating-wrapper">
+                    <div id="star-rating-container" class="stars-ui">
+                        </div>
+                    <div class="rating-text-info">
+                        <span id="avg-rating-text">0.0</span>/10
+                        <span id="votes-count-text">(0 голосів)</span>
+                    </div>
+                    <div id="user-vote-msg">Ваша оцінка врахована!</div>
+                </div>
+
+                <ul class="movie-char-list">
+                    <li>Країна виробництва: <span id="m-country">---</span></li>
+                    <li>Доступ глядачам: <span style="color: #2ecc71;">Безкоштовно</span></li>
+                </ul>
+                <div class="movie-desc" id="m-desc">Синхронізація з сервером KinoHub...</div>
+            </div>
+        </div>
+
+        <div class="video-section-wrapper">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px;">
+                <h2 style="margin: 0; font-size: 1.5rem; color: #fff;">🍿 Онлайн-плеєр KinoHub</h2>
+                <div>
+                    <select id="quality-selector" style="background: #111; color: #fff; border: 1px solid #4a90e2; padding: 6px 12px; border-radius: 6px; cursor: pointer; outline: none;">
+                        <option value="1080">FullHD 1080p</option><option value="720">HD 720p</option>
+                    </select>
+                </div>
+            </div>
+            <div id="player-container" style="position: relative; width: 100%; border-radius: 10px; overflow: hidden; background: #000;">
+                <video id="video-player" class="video-player-fixed" controls controlsList="nodownload"></video>
+            </div>
+        </div>
+
+        <div class="comments-section" style="width: 100%; box-sizing: border-box; border: 1px solid #4a90e2; border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
+            <h3 style="margin-top: 0; color: #ffd700; font-size: 1.4rem; border-bottom: 1px solid #333; padding-bottom: 12px; margin-bottom: 15px;">💬 Коментарі</h3>
+            <div id="local-comments-list" style="max-height: 280px; overflow-y: auto; margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px; padding-right: 5px;"></div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="local-comment-input" placeholder="Поділіться враженнями..." style="flex: 1; padding: 12px; background: #111; border: 1px solid #444; color: white; border-radius: 8px; outline: none;">
+                <button id="local-submit-comment" style="background: #4a90e2; color: white; border: none; padding: 0 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">Надіслати</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="s1.js"></script>
+    
+    <script>
+        const BIN_ID = '6a24577af5f4af5e29c32cf6';
+        const API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq';
+        let currentMovieData = null;
+
+        async function initMoviePage() {
+            const params = new URLSearchParams(window.location.search);
+            const movieId = params.get('id');
+            if (!movieId) { document.getElementById('m-title').textContent = "Помилка: ID фільму відсутній!"; return; }
+
+            let currentViews = parseInt(localStorage.getItem('views_' + movieId)) || 0;
+            localStorage.setItem('views_' + movieId, currentViews + 1);
+
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?t=${Date.now()}`, { headers: { 'X-Master-Key': API_KEY, 'Cache-Control': 'no-cache' } });
+                const data = await res.json();
+                const movies = data.record;
+                currentMovieData = movies.find(m => m.id == movieId) || movies[movieId];
+
+                if (currentMovieData) {
+                    document.title = `KinoHub - ${currentMovieData.title}`;
+                    document.getElementById('poster-img').src = currentMovieData.img;
+                    document.getElementById('m-title').textContent = currentMovieData.title;
+                    document.getElementById('m-year-tag').textContent = currentMovieData.year || '2026';
+                    document.getElementById('m-genre-tag').textContent = currentMovieData.genre || 'Фільм';
+                    document.getElementById('m-quality-tag').textContent = currentMovieData.quality || '1080p';
+                    document.getElementById('m-country').textContent = currentMovieData.country || 'США';
+                    document.getElementById('m-desc').textContent = currentMovieData.desc || 'Опис відсутній.';
+
+                    // ЗАПУСК СИСТЕМИ РЕЙТИНГІВ
+                    initRatingSystem(currentMovieData, movieId);
+
+                    const player = document.getElementById('video-player');
+                    const videoLink = currentMovieData.video_1080 || currentMovieData.video_720;
+
+                    if (videoLink && videoLink.trim() !== "") {
+                        player.src = videoLink;
+                        player.load();
+                    } else {
+                        document.getElementById('player-container').innerHTML = `
+                            <div style="color: #ff4d4d; background: #0a0f1e; aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; border: 1px dashed #444; padding: 20px; text-align: center;">
+                                <span style="font-size: 1.2rem; font-weight: bold;">⚠️ Відеофайл відсутній.</span>
+                                <span style="font-size: 0.9rem; color: #888; margin-top: 5px;">Завантажте відеофайл (.mp4) або вставте пряме посилання в адмін-панелі.</span>
+                            </div>`;
+                    }
+
+                    document.getElementById('quality-selector').addEventListener('change', function(e) {
+                        const playerCheck = document.getElementById('video-player');
+                        if (!playerCheck) return;
+                        const time = playerCheck.currentTime; const isPaused = playerCheck.paused;
+                        playerCheck.src = e.target.value === '1080' ? (currentMovieData.video_1080 || currentMovieData.video_720) : (currentMovieData.video_720 || currentMovieData.video_1080);
+                        playerCheck.load(); playerCheck.currentTime = time; if (!isPaused) playerCheck.play();
+                    });
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // --- ЛОГІКА ІНТЕРАКТИВНОГО РЕЙТИНГУ ---
+        function initRatingSystem(movie, movieId) {
+            const starContainer = document.getElementById('star-rating-container');
+            const avgText = document.getElementById('avg-rating-text');
+            const votesText = document.getElementById('votes-count-text');
+            const msgText = document.getElementById('user-vote-msg');
+
+            const baseRating = parseFloat(movie.rating) || 8.0; 
+            const baseVotes = 25; 
+
+            let stats = JSON.parse(localStorage.getItem('rating_stats_' + movieId));
+            if (!stats) {
+                stats = { sum: baseRating * baseVotes, count: baseVotes };
+            }
+
+            let userVote = parseInt(localStorage.getItem('user_vote_' + movieId));
+
+            function renderStars() {
+                const currentAvg = (stats.sum / stats.count).toFixed(1);
+                avgText.textContent = currentAvg;
+                votesText.textContent = `(${stats.count} голосів)`;
+
+                if (userVote) {
+                    msgText.style.display = 'block';
+                    msgText.textContent = `Ваша оцінка: ${userVote}/10`;
+                }
+
+                starContainer.innerHTML = '';
+                const ratingToDisplay = userVote ? userVote : Math.round(currentAvg);
+
+                for (let i = 1; i <= 10; i++) {
+                    const star = document.createElement('span');
+                    star.innerHTML = '★';
+                    star.style.color = i <= ratingToDisplay ? '#ffd700' : '#555';
+                    
+                    if (!userVote) {
+                        star.addEventListener('mouseenter', () => {
+                            Array.from(starContainer.children).forEach((s, index) => {
+                                s.style.color = index < i ? '#ffd700' : '#555';
+                            });
+                        });
+                        
+                        star.addEventListener('mouseleave', () => {
+                            Array.from(starContainer.children).forEach((s, index) => {
+                                s.style.color = index < Math.round(currentAvg) ? '#ffd700' : '#555';
+                            });
+                        });
+
+                        star.addEventListener('click', () => {
+                            userVote = i;
+                            localStorage.setItem('user_vote_' + movieId, i);
+                            
+                            stats.sum += i;
+                            stats.count += 1;
+                            localStorage.setItem('rating_stats_' + movieId, JSON.stringify(stats));
+                            
+                            renderStars(); 
+                        });
+                    } else {
+                        star.style.cursor = 'default';
+                        star.style.transform = 'none';
+                    }
+
+                    starContainer.appendChild(star);
+                }
+            }
+
+            renderStars();
+        }
+
+        // Запуск логіки фільму
+        document.addEventListener('DOMContentLoaded', initMoviePage);
+    </script>
+</body>
+</html>
