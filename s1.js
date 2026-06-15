@@ -403,27 +403,65 @@ filterPills.forEach(pill => {
 });
 
 function applyAllFilters() {
-    if (typeof moviesDatabase === 'undefined' || moviesDatabase.length === 0) return;
+    // 1. ЗАХИСТ: Перевіряємо, чи є взагалі база фільмів
+    if (!moviesDatabase || moviesDatabase.length === 0) {
+        console.warn("Фільтрація: База фільмів ще не завантажена або порожня.");
+        // Можна додати alert, якщо хочеш повідомити користувача:
+        // alert("Зачекайте, каталог ще завантажується...");
+        return; 
+    }
     
-    let filtered = [...moviesDatabase];
-    const activePill = document.querySelector('.filter-pill.selected, .filter-tab.selected, .status-circle.selected');
+    let filtered = [...moviesDatabase]; // Беремо копію всієї бази
+    
+    // 2. Отримуємо активну "пігулку" (фільтр)
+    const activePill = document.querySelector('.filter-pill.selected');
     const value = activePill ? activePill.innerText.trim() : "Всі";
 
+    console.log("Застосовую фільтр:", value); // Лог для перевірки в консолі
+
+    // 3. Логіка фільтрації
     if (value === "Новинки") {
-        filtered.sort((a, b) => b.year - a.year);
+        // Сортуємо від найновіших до найстаріших
+        filtered.sort((a, b) => parseInt(b.year) - parseInt(a.year));
     } else if (value === "За рейтингом ★") {
-        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    } else if (value !== "Всі") {
-        filtered = filtered.filter(m => 
-            (m.genre && m.genre.toLowerCase().includes(value.toLowerCase())) || 
-            (m.title && m.title.toLowerCase().includes(value.toLowerCase())) || 
-            m.year == parseInt(value)
-        );
+        // Сортуємо від найвищого рейтингу до найнижчого
+        filtered.sort((a, b) => parseFloat(b.rating || 0) - parseFloat(a.rating || 0));
+    } else if (value !== "Всі" && value !== "Популярні") { // Якщо це жанр
+        // Фільтруємо за жанром
+        filtered = filtered.filter(m => {
+            if (!m.genre) return false;
+            // Розбиваємо жанри фільму (якщо їх кілька через кому) і перевіряємо
+            const genres = m.genre.toLowerCase().split(',').map(g => g.trim());
+            return genres.includes(value.toLowerCase());
+        });
     }
 
+    // 4. Оновлюємо глобальний масив та перемальовуємо
     filteredMovies = filtered;
     currentPage = 1; 
+    
+    // Викликаємо функцію відтворення каталогу
     renderKinokradList(); 
+    
+    // 5. Плавний скрол до каталогу (опціонально)
+    const newsSection = document.querySelector('.news-section');
+    if (newsSection) {
+        newsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+    // 4. Оновлюємо глобальний масив та перемальовуємо
+    filteredMovies = filtered;
+    currentPage = 1; 
+    
+    // Викликаємо функцію відтворення каталогу
+    renderKinokradList(); 
+    
+    // 5. Плавний скрол до каталогу (опціонально)
+    const newsSection = document.querySelector('.news-section');
+    if (newsSection) {
+        newsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 // ====================================================================
