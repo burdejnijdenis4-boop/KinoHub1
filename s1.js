@@ -484,8 +484,7 @@ async function sendMessage() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-       fetch('https://твій-проєкт.onrender.com/api/chat', { 
-    method: 'POST',
+        const response = await fetch('https://burdejnijdenis4-boop.github.io/KinoHub1', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text, useFilter: useFilter }) 
