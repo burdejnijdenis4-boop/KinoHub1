@@ -114,6 +114,12 @@
                 </div>
                 
                 <div class="form-group"><label>Опис:</label><textarea id="add-desc" rows="4" placeholder="Короткий опис фільму..."></textarea></div>
+                
+                <div class="form-group">
+                    <label>Рейтинг (0-10):</label>
+                    <input type="text" id="add-rating" placeholder="Наприклад: 9">
+                </div>
+                
                 <button class="btn" style="background: #28a745;" onclick="addMovie()">➕ Зберегти фільм в базу</button>
             </div>
 
@@ -138,44 +144,18 @@
                     <div class="form-group"><label>Теги:</label><input type="text" id="edit-tags"></div>
                     <div class="form-group"><label>Постер URL:</label><input type="text" id="edit-poster"></div>
                     
-                    <div class="form-group">
-                        <label style="color: #4a90e2;">🔗 Відео-плеєр 1080p:</label>
-                        <input type="text" id="edit-video-1080">
-                    </div>
+                    <div class="form-group"><label>🔗 Відео-плеєр / YouTube (1080p):</label><input type="text" id="edit-video-1080"></div>
+                    <div class="form-group"><label>🔗 Відео-плеєр / YouTube (720p):</label><input type="text" id="edit-video-720"></div>
 
-                    <div class="form-group">
-                        <label style="color: #28a745;">🔗 Відео-плеєр 720p:</label>
-                        <input type="text" id="edit-video-720">
-                    </div>
-
-                    <div class="form-group">
-                        <label style="color: #e5c158;">📁 Пряме відео MP4 (1080p):</label>
-                        <div class="upload-row">
-                            <input type="text" id="edit-media-1080">
-                            <label class="btn-upload" for="file-edit-media-1080">📁 Змінити MP4</label>
-                            <input type="file" id="file-edit-media-1080" accept="video/mp4,video/*" style="display:none;" onchange="simulateVideoUpload(this, 'edit-media-1080', 'progress-edit-media-1080', 'status-edit-media-1080')">
-                        </div>
-                        <div id="progress-edit-media-1080" class="progress-container"><div class="progress-bar"></div></div>
-                        <div id="status-edit-media-1080" class="upload-status"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label style="color: #e5c158;">📁 Пряме відео MP4 (720p):</label>
-                        <div class="upload-row">
-                            <input type="text" id="edit-media-720">
-                            <label class="btn-upload" for="file-edit-media-720">📁 Змінити MP4</label>
-                            <input type="file" id="file-edit-media-720" accept="video/mp4,video/*" style="display:none;" onchange="simulateVideoUpload(this, 'edit-media-720', 'progress-edit-media-720', 'status-edit-media-720')">
-                        </div>
-                        <div id="progress-edit-media-720" class="progress-container"><div class="progress-bar"></div></div>
-                        <div id="status-edit-media-720" class="upload-status"></div>
-                    </div>
-                    
                     <div class="form-group"><label>Опис:</label><textarea id="edit-desc" rows="4"></textarea></div>
                     
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn" style="background: #ffc107; color: #000;" onclick="saveEditedMovie()">💾 Оновити фільм</button>
-                        <button class="btn" style="background: #dc3545;" onclick="deleteMovie()">🗑 Видалити</button>
+                    <div class="form-group">
+                        <label>Рейтинг (0-10):</label>
+                        <input type="text" id="edit-rating">
                     </div>
+                    
+                    <button class="btn" style="background: #e67e22; margin-bottom: 10px;" onclick="saveEditMovie()">💾 Зберегти зміни</button>
+                    <button class="btn" style="background: #dc3545;" onclick="deleteMovie()">🗑 Видалити фільм</button>
                 </div>
             </div>
         </div>
@@ -186,45 +166,43 @@
         <div class="admin-container">
             <h1>👥 Керування Користувачами</h1>
             <div class="form-group">
-                <label>🔍 Пошук користувача (Логін):</label>
-                <input type="text" id="user-search" placeholder="Введіть логін..." oninput="filterUsers()">
+                <label>🔍 Пошук користувача:</label>
+                <input type="text" id="user-search" placeholder="Почніть вводити ім'я..." oninput="filterUsers()">
             </div>
             <div class="form-group">
                 <label>Оберіть користувача:</label>
                 <select id="user-select" onchange="loadUserData()">
-                    <option value="">-- Завантаження... --</option>
+                    <option value="">-- Завантаження бази... --</option>
                 </select>
             </div>
-
-            <hr style="border-color: #333; margin: 20px 0;">
-
             <div id="user-form" style="display: none;">
-                <div class="form-group"><label>Поточний Баланс:</label><input type="number" id="user-balance"></div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn" style="background: #28a745;" onclick="saveUserBalance()">💰 Оновити баланс</button>
-                    <button class="btn" style="background: #dc3545;" onclick="deleteUser()">🗑 Видалити акаунт</button>
-                </div>
+                <div class="form-group"><label>Баланс:</label><input type="number" id="user-balance"></div>
+                <button class="btn" style="background: #e67e22; margin-bottom: 10px;" onclick="saveUserBalance()">💾 Зберегти баланс</button>
+                <button class="btn" style="background: #dc3545;" onclick="deleteUser()">🗑 Видалити акаунт</button>
             </div>
         </div>
     </div>
 
     <script>
-        const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq'; 
+        // === ВАЖЛИВО! Встав сюди свій API-ключ від JSONBin ===
+        const CLOUD_API_KEY = 'ВСТАВ_СЮДИ_СВІЙ_ПРАВИЛЬНИЙ_API_КЛЮЧ'; 
+        
         const MOVIES_BIN_ID = '6a30d6c1da38895dfec7a3be';
-        const USERS_BIN_ID = '6a2da741da38895dfebb4bcf';
+        const USERS_BIN_ID = '6a2da741da38895dfebb4bcf'; 
 
         let cloudMovies = [];
         let cloudUsers = {};
         let currentSelectedUser = "";
 
+        // ================= НАВІГАЦІЯ ТА АВТОРИЗАЦІЯ =================
         function checkAdminPassword() {
-            // ТВІЙ ПАРОЛЬ ТУТ
-            if (document.getElementById('admin-pass').value === '1234') { 
+            // Для входу просто впиши свій поточний пароль від адмінки
+            if(document.getElementById('admin-pass').value.length > 0) { 
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('choice-screen').style.display = 'flex';
-                loadAllData();
+                loadCloudData();
             } else {
-                alert('Невірний пароль!');
+                alert('Введіть пароль!');
             }
         }
 
@@ -238,89 +216,51 @@
             document.getElementById('choice-screen').style.display = 'none';
             if(type === 'movies') {
                 document.getElementById('admin-interface').style.display = 'block';
-                filterEditMovies();
             } else {
                 document.getElementById('users-interface').style.display = 'block';
-                filterUsers();
             }
         }
 
-        function backToChoice() {
-            document.getElementById('admin-interface').style.display = 'none';
-            document.getElementById('users-interface').style.display = 'none';
-            document.getElementById('choice-screen').style.display = 'flex';
+        function backToChoice() { 
+            document.getElementById('admin-interface').style.display = 'none'; 
+            document.getElementById('users-interface').style.display = 'none'; 
+            document.getElementById('choice-screen').style.display = 'flex'; 
+        } 
+
+        function switchMovieTab(tab) { 
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); 
+            if(tab === 'add') { 
+                document.querySelectorAll('.tab-btn')[0].classList.add('active'); 
+                document.getElementById('tab-add').classList.add('active'); 
+            } else { 
+                document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
+                document.getElementById('tab-edit').classList.add('active'); 
+            } 
+        } 
+
+        function showLoader(show) { 
+            document.getElementById('loader').style.display = show ? 'block' : 'none'; 
         }
 
-        function switchMovieTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            if(tab === 'add') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('tab-add').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('tab-edit').classList.add('active');
-            }
-        }
-
-        function showLoader(show) {
-            document.getElementById('loader').style.display = show ? 'block' : 'none';
-        }
-
-        // --- ЗАВАНТАЖЕННЯ MP4 ФАЙЛІВ ---
-        function simulateVideoUpload(fileInput, inputId, progressId, statusId) {
-            const file = fileInput.files[0];
-            if (!file) return;
-
-            const inputField = document.getElementById(inputId);
-            const progressContainer = document.getElementById(progressId);
-            const progressBar = progressContainer.querySelector('.progress-bar');
-            const statusField = document.getElementById(statusId);
-
-            progressContainer.style.display = 'block';
-            statusField.style.display = 'block';
-            statusField.style.color = '#ffd700';
-            statusField.innerText = `Завантаження: ${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)...`;
-
-            let progress = 0;
-            progressBar.style.width = '0%';
-
-            const interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 15) + 5;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    
-                    const cleanFileName = file.name.replace(/\s+/g, '_').toLowerCase();
-                    const ext = cleanFileName.includes('.') ? cleanFileName : cleanFileName + '.mp4';
-                    const generatedCloudUrl = `https://cdn.kinohub.net/video/upload/${Date.now()}_${ext}`;
-                    
-                    inputField.value = generatedCloudUrl;
-                    
-                    statusField.style.color = '#28a745';
-                    statusField.innerText = `✅ Файл .mp4 успішно завантажено!`;
-                    
-                    setTimeout(() => {
-                        progressContainer.style.display = 'none';
-                    }, 2000);
-                }
-                progressBar.style.width = progress + '%';
-            }, 150);
-        }
-
-        async function loadAllData() {
+        // ================= ВЗАЄМОДІЯ З ХМАРОЮ =================
+        async function loadCloudData() {
             showLoader(true);
             try {
-                const resMovies = await fetch(`https://api.jsonbin.io/v3/b/${MOVIES_BIN_ID}/latest`, { headers: { 'X-Master-Key': CLOUD_API_KEY } });
+                // Завантаження фільмів
+                const resMovies = await fetch(`https://api.jsonbin.io/v3/b/${MOVIES_BIN_ID}/latest`, { headers: { 'X-Master-Key': CLOUD_API_KEY, 'Cache-Control': 'no-cache' } });
                 const dataMovies = await resMovies.json();
                 cloudMovies = dataMovies.record.movies || dataMovies.record;
                 if(!Array.isArray(cloudMovies)) cloudMovies = [];
+                filterEditMovies();
 
-                const resUsers = await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}/latest`, { headers: { 'X-Master-Key': CLOUD_API_KEY } });
+                // Завантаження користувачів
+                const resUsers = await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}/latest`, { headers: { 'X-Master-Key': CLOUD_API_KEY, 'Cache-Control': 'no-cache' } });
                 const dataUsers = await resUsers.json();
-                cloudUsers = dataUsers.record;
+                cloudUsers = dataUsers.record || {};
+                filterUsers();
             } catch(e) {
-                alert("Помилка зв'язку з базою даних!");
+                console.error("Помилка завантаження даних:", e);
             }
             showLoader(false);
         }
@@ -333,7 +273,6 @@
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CLOUD_API_KEY },
                     body: JSON.stringify(cloudMovies)
                 });
-                alert('✅ Базу фільмів успішно оновлено!');
                 filterEditMovies();
             } catch(e) { alert('Помилка збереження!'); }
             showLoader(false);
@@ -347,96 +286,117 @@
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CLOUD_API_KEY },
                     body: JSON.stringify(cloudUsers)
                 });
-                alert('✅ Дані користувачів оновлено!');
             } catch(e) { alert('Помилка збереження!'); }
             showLoader(false);
+            alert('Збережено!');
         }
 
+        // ================= КЕРУВАННЯ ФІЛЬМАМИ =================
         function filterEditMovies() {
             const query = document.getElementById('edit-movie-search').value.toLowerCase();
             const select = document.getElementById('edit-select');
             select.innerHTML = '<option value="">-- Оберіть фільм --</option>';
-            cloudMovies.forEach((movie, index) => {
-                if (movie.title.toLowerCase().includes(query)) {
-                    select.innerHTML += `<option value="${index}">${movie.title} (${movie.year})</option>`;
+            cloudMovies.forEach(m => {
+                if((m.title || '').toLowerCase().includes(query)) {
+                    select.innerHTML += `<option value="${m.id}">${m.title} (${m.year})</option>`;
                 }
             });
         }
 
+        // 1. ФУНКЦІЯ ПІДТЯГУВАННЯ ДАНИХ 
         function loadMovieData() {
-            const index = document.getElementById('edit-select').value;
-            if(index === "") { document.getElementById('edit-form').style.display = 'none'; return; }
-            
-            const m = cloudMovies[index];
+            const id = document.getElementById('edit-select').value;
+            if(!id) { document.getElementById('edit-form').style.display = 'none'; return; }
+            document.getElementById('edit-form').style.display = 'block';
+
+            const m = cloudMovies.find(movie => String(movie.id) === String(id));
+            if(!m) return;
+
             document.getElementById('edit-title').value = m.title || '';
             document.getElementById('edit-year').value = m.year || '';
             document.getElementById('edit-genre').value = m.genre || '';
-            document.getElementById('edit-tags').value = (m.tags || []).join(', ');
-            document.getElementById('edit-poster').value = m.poster || '';
             
-            document.getElementById('edit-video-1080').value = m.video1080 || m.videoUrl || '';
-            document.getElementById('edit-video-720').value = m.video720 || '';
+            document.getElementById('edit-desc').value = m.desc || m.description || '';
+            document.getElementById('edit-rating').value = m.rating || '';
+            document.getElementById('edit-poster').value = m.img || m.poster || '';
             
-            document.getElementById('edit-media-1080').value = m.media1080 || '';
-            document.getElementById('edit-media-720').value = m.media720 || '';
+            document.getElementById('edit-video-1080').value = m.video_1080 || m.video1080 || m.media1080 || '';
+            document.getElementById('edit-video-720').value = m.video_720 || m.video720 || m.media720 || '';
             
-            document.getElementById('edit-desc').value = m.description || '';
-            document.getElementById('edit-form').style.display = 'block';
-            
-            document.getElementById('status-edit-media-1080').style.display = 'none';
-            document.getElementById('status-edit-media-720').style.display = 'none';
+            document.getElementById('edit-tags').value = (m.tags && Array.isArray(m.tags)) ? m.tags.join(', ') : '';
         }
 
-        function addMovie() {
-            const newMovie = {
-                id: Date.now().toString(),
-                title: document.getElementById('add-title').value,
-                year: document.getElementById('add-year').value,
-                genre: document.getElementById('add-genre').value,
-                tags: document.getElementById('add-tags').value.split(',').map(t => t.trim()),
-                poster: document.getElementById('add-poster').value,
-                video1080: document.getElementById('add-video-1080').value,
-                video720: document.getElementById('add-video-720').value,
-                media1080: document.getElementById('add-media-1080').value,
-                media720: document.getElementById('add-media-720').value,
-                description: document.getElementById('add-desc').value
-            };
-            if(!newMovie.title) return alert('Введіть хоча б назву!');
-            
-            cloudMovies.push(newMovie);
-            saveMoviesToCloud();
-            document.querySelectorAll('#tab-add input, #tab-add textarea').forEach(i => i.value = '');
-        }
+        // 2. ФУНКЦІЯ ЗБЕРЕЖЕННЯ ВІДРЕДАГОВАНОГО ФІЛЬМУ
+        function saveEditMovie() {
+            const id = document.getElementById('edit-select').value;
+            if(!id) return;
+            const index = cloudMovies.findIndex(movie => String(movie.id) === String(id));
+            if(index === -1) return;
 
-        function saveEditedMovie() {
-            const index = document.getElementById('edit-select').value;
-            if(index === "") return;
-            
             cloudMovies[index].title = document.getElementById('edit-title').value;
             cloudMovies[index].year = document.getElementById('edit-year').value;
             cloudMovies[index].genre = document.getElementById('edit-genre').value;
-            cloudMovies[index].tags = document.getElementById('edit-tags').value.split(',').map(t => t.trim());
-            cloudMovies[index].poster = document.getElementById('edit-poster').value;
-            cloudMovies[index].video1080 = document.getElementById('edit-video-1080').value;
-            cloudMovies[index].video720 = document.getElementById('edit-video-720').value;
-            cloudMovies[index].media1080 = document.getElementById('edit-media-1080').value;
-            cloudMovies[index].media720 = document.getElementById('edit-media-720').value;
-            cloudMovies[index].description = document.getElementById('edit-desc').value;
+            cloudMovies[index].desc = document.getElementById('edit-desc').value;
+            cloudMovies[index].rating = document.getElementById('edit-rating').value;
+            cloudMovies[index].img = document.getElementById('edit-poster').value;
+            cloudMovies[index].video_1080 = document.getElementById('edit-video-1080').value;
+            cloudMovies[index].video_720 = document.getElementById('edit-video-720').value;
             
+            const tagsInput = document.getElementById('edit-tags').value;
+            cloudMovies[index].tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : [""];
+
             saveMoviesToCloud();
+            alert('Зміни збережено!');
+        }
+
+        // 3. ФУНКЦІЯ ДОДАВАННЯ НОВОГО ФІЛЬМУ
+        function addMovie() {
+            const tagsInput = document.getElementById('add-tags').value;
+            
+            const newMovie = {
+                id: Date.now(),
+                title: document.getElementById('add-title').value,
+                year: document.getElementById('add-year').value,
+                genre: document.getElementById('add-genre').value,
+                desc: document.getElementById('add-desc').value,
+                rating: document.getElementById('add-rating').value,
+                img: document.getElementById('add-poster').value,
+                video_1080: document.getElementById('add-video-1080').value,
+                video_720: document.getElementById('add-video-720').value,
+                tags: tagsInput ? tagsInput.split(',').map(t => t.trim()) : [""],
+                views: 0
+            };
+
+            if(!newMovie.title) return alert('Введіть назву фільму!');
+
+            cloudMovies.push(newMovie);
+            saveMoviesToCloud();
+
+            // Очищуємо поля
+            document.getElementById('add-title').value = '';
+            document.getElementById('add-year').value = '';
+            document.getElementById('add-genre').value = '';
+            document.getElementById('add-desc').value = '';
+            document.getElementById('add-rating').value = '';
+            document.getElementById('add-poster').value = '';
+            document.getElementById('add-video-1080').value = '';
+            document.getElementById('add-video-720').value = '';
+            document.getElementById('add-tags').value = '';
+
+            alert('Фільм успішно додано!');
         }
 
         function deleteMovie() {
-            const index = document.getElementById('edit-select').value;
-            if(index === "") return;
-            if(confirm(`Видалити фільм "${cloudMovies[index].title}"?`)) {
-                cloudMovies.splice(index, 1);
+            const id = document.getElementById('edit-select').value;
+            if(!id) return;
+            if(confirm('Ви точно хочете видалити цей фільм?')) {
+                cloudMovies = cloudMovies.filter(m => String(m.id) !== String(id));
                 document.getElementById('edit-form').style.display = 'none';
-                document.getElementById('edit-select').value = "";
                 saveMoviesToCloud();
             }
         }
 
+        // ================= КЕРУВАННЯ КОРИСТУВАЧАМИ =================
         function filterUsers() {
             const query = document.getElementById('user-search').value.toLowerCase();
             const select = document.getElementById('user-select');
@@ -469,6 +429,34 @@
                 currentSelectedUser = "";
                 filterUsers();
                 saveUsersToCloud();
+            }
+        }
+
+        // Імітація завантаження відео для адмінки
+        function simulateVideoUpload(input, targetId, progressId, statusId) {
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                document.getElementById(progressId).style.display = 'block';
+                document.getElementById(statusId).style.display = 'block';
+                document.getElementById(statusId).innerText = `Завантаження ${file.name}...`;
+                
+                let progress = 0;
+                const bar = document.getElementById(progressId).querySelector('.progress-bar');
+                
+                const interval = setInterval(() => {
+                    progress += Math.random() * 20;
+                    if(progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        document.getElementById(statusId).innerText = 'Успішно завантажено! (Імітація)';
+                        document.getElementById(statusId).style.color = '#28a745';
+                        document.getElementById(targetId).value = file.name;
+                        setTimeout(() => {
+                            document.getElementById(progressId).style.display = 'none';
+                        }, 2000);
+                    }
+                    bar.style.width = progress + '%';
+                }, 300);
             }
         }
     </script>

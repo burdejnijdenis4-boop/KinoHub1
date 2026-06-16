@@ -6,13 +6,13 @@
     <title>KinoHub - Перегляд фільму</title>
     <link rel="stylesheet" href="s1.css">
     <style>
-        /* === БАЗОВІ СТИЛІ (ЗАХИСТ ВІД ЗЛАМУ СІТКИ) === */
+        /* === БАЗОВІ СТИЛІ === */
         body { background: #0a0f1e; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { max-width: 1000px; width: 100%; margin-top: 40px; background: rgba(26, 34, 51, 0.75); border-radius: 15px; padding: 30px; border: 1px solid rgba(74, 144, 226, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); box-sizing: border-box; }
         .back-link { display: inline-flex; align-items: center; color: #4a90e2; text-decoration: none; font-weight: bold; margin-bottom: 20px; transition: color 0.3s ease; }
         .back-link:hover { color: #ffd700; }
         
-        /* === ФІКС ПОСТЕРА (Щоб він ніколи не розтягувався) === */
+        /* === ПОСТЕР === */
         .movie-header { display: flex; gap: 30px; margin-bottom: 30px; align-items: flex-start; }
         .movie-poster-wrapper { flex: 0 0 250px; width: 250px; position: relative; }
         .movie-poster-wrapper img { 
@@ -134,8 +134,8 @@
     </div>
 
     <script>
-        // ВАЖЛИВО: Якщо ти оновив цей ключ на головній сторінці, обов'язково онови його і тут!
-        const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq'; 
+        // === ВСТАВ СЮДИ СВІЙ ПРАВИЛЬНИЙ API КЛЮЧ ===
+        const CLOUD_API_KEY = 'ВСТАВ_СЮДИ_СВІЙ_ПРАВИЛЬНИЙ_API_КЛЮЧ'; 
         const MOVIES_BIN_ID = '6a30d6c1da38895dfec7a3be';
         const COMMENTS_BIN_ID = '6a2f2a5ef5f4af5e29f1fa87';
 
@@ -245,7 +245,7 @@
             
             const movie = window.currentMovieData;
             
-            // ВИПРАВЛЕНО: тепер враховується нижнє підкреслення з JSON (video_1080, video_720)
+            // Враховано нижнє підкреслення з JSON (video_1080, video_720)
             let mp4Url = quality === '720' ? (movie.media720 || movie.video_720) : (movie.media1080 || movie.video_1080);
             let iframeUrl = quality === '720' ? (movie.video720 || movie.video_720) : (movie.video1080 || movie.video_1080 || movie.videoUrl);
 
@@ -308,7 +308,7 @@
                 const currentAvg = stats.count > 0 ? (stats.sum / stats.count) : 0;
                 statsText.innerText = `(${stats.count} голосів, середня: ${currentAvg.toFixed(1)})`;
 
-                // ВИПРАВЛЕНО: тепер генерується 10 зірочок замість 5
+                // 10 зірочок
                 for (let i = 1; i <= 10; i++) {
                     const star = document.createElement('span');
                     star.className = 'star';
