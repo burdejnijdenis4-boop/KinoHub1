@@ -5,7 +5,7 @@ const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNG
 const USERS_BIN_ID = '6a2da741da38895dfebb4bcf';  
 const MOVIES_BIN_ID = '6a24577af5f4af5e29c32cf6';
 const COMMENTS_BIN_ID = '6a2f2a5ef5f4af5e29f1fa87'; 
-let filteredMovies = []; // Це твоя "коробка", в яку ми кладемо результат
+let filteredMovies = []; 
 
 // Функція для отримання даних користувачів з хмари
 async function loadUsersFromCloud() {
@@ -65,14 +65,14 @@ async function updateUI() {
         balanceElement.innerText = Number(userData.balance || 0).toLocaleString('uk-UA');
     }
 
-    // Оновлюємо аватарку (виправлено для кольорових аватарок та прапорів)
+    // Оновлюємо аватарку
     if (avatarElement && userData.avatar) {
         if (userData.avatar.startsWith('#') || userData.avatar.startsWith('linear-gradient') || userData.avatar.startsWith('flag:')) {
-            avatarElement.style.opacity = '0'; // Ховаємо биту картинку
+            avatarElement.style.opacity = '0'; 
             const wrapper = avatarElement.closest('.avatar-wrapper');
             if (wrapper) {
                 if (userData.avatar.startsWith('flag:')) {
-                    wrapper.style.background = '#4a90e2'; // Спрощений фон для прапорів у шапці
+                    wrapper.style.background = '#4a90e2'; 
                 } else {
                     wrapper.style.background = userData.avatar;
                 }
@@ -403,19 +403,15 @@ filterPills.forEach(pill => {
 });
 
 function applyAllFilters() {
-    // 1. Перевірка бази
     if (typeof moviesDatabase === 'undefined' || !moviesDatabase) {
         console.log("База ще не завантажена");
         return; 
     }
     
     let filtered = [...moviesDatabase];
-    
-    // 2. Пошук фільтра
     const activePill = document.querySelector('.filter-pill.selected, .filter-tab.selected, .status-circle.selected');
     const value = activePill ? activePill.innerText.trim() : "Всі";
 
-    // 3. Логіка сортування та фільтрації
     try {
         if (value === "Новинки") {
             filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
@@ -434,7 +430,6 @@ function applyAllFilters() {
         console.error("Помилка:", e);
     }
 
-    // 4. Оновлення та відмальовка
     filteredMovies = filtered;
     if (typeof currentPage !== 'undefined') currentPage = 1;
     
@@ -442,7 +437,6 @@ function applyAllFilters() {
         renderKinokradList(); 
     }
 
-    // 5. Скрол до результатів
     const scrollSection = document.querySelector('.news-section');
     if (scrollSection) {
         scrollSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -450,7 +444,7 @@ function applyAllFilters() {
 }
 
 // ====================================================================
-// 9. AI ЧАТ-БОТ 
+// 9. AI ЧАТ-БОТ З РОЗУМНОЮ ЛОКАЛЬНОЮ ФІЛЬТРАЦІЄЮ
 // ====================================================================
 let isAiFilterActive = false; 
 
@@ -538,12 +532,35 @@ async function sendMessage() {
 
         saveChatToLocalStorage('bot', data.reply);
 
-        if (useFilter && data.action === 'filter') {
-            if (data.movieIds && data.movieIds.length > 0) {
+        // ===========================================================
+        // РОЗУМНА ФІЛЬТРАЦІЯ НА БОЗІ ФРОНТЕНДУ (БЕЗПЕЧНИЙ РЕЗЕРВ)
+        // ===========================================================
+        if (useFilter) {
+            let keyword = text.toLowerCase(); // За замовчуванням ключове слово - це запит користувача
+            
+            // Якщо сервер надіслав конкретні ID фільмів (ідеальний варіант)
+            if (data.action === 'filter' && data.movieIds && data.movieIds.length > 0) {
                 const targetIds = data.movieIds.map(String);
                 filteredMovies = moviesDatabase.filter(m => targetIds.includes(String(m.id)));
-            } else {
-                filteredMovies = []; 
+            } 
+            // Якщо сервер надіслав ключове слово для фільтрації
+            else if (data.action === 'filter' && data.query) {
+                keyword = data.query.toLowerCase();
+                filteredMovies = moviesDatabase.filter(m => 
+                    (m.title && m.title.toLowerCase().includes(keyword)) ||
+                    (m.genre && m.genre.toLowerCase().includes(keyword)) ||
+                    (m.year && String(m.year).includes(keyword))
+                );
+            } 
+            // ЯКЩО СЕРВЕР ПРОМОВЧАВ: Наш локальний пошук рятує ситуацію!
+            else {
+                filteredMovies = moviesDatabase.filter(m => {
+                    const titleMatch = m.title && m.title.toLowerCase().includes(keyword);
+                    const genreMatch = m.genre && m.genre.toLowerCase().includes(keyword);
+                    const yearMatch = m.year && String(m.year).includes(keyword);
+                    const descMatch = m.desc && m.desc.toLowerCase().includes(keyword);
+                    return titleMatch || genreMatch || yearMatch || descMatch;
+                });
             }
             
             currentPage = 1; 
@@ -552,6 +569,7 @@ async function sendMessage() {
             const movieListSection = document.getElementById('movie-list');
             if (movieListSection) movieListSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+        // ===========================================================
 
     } catch (error) {
         console.error("Chat error:", error);
@@ -869,26 +887,20 @@ function initThemeToggle() {
 // 13. ІНІЦІАЛІЗАЦІЯ ДОДАТКУ (СТАРТ)
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Оновлюємо UI (Баланс, Аватарка)
     try { updateUI(); } catch (e) { console.error(e); }
     
-    // 2. Завантажуємо фільми
     loadMoviesFromJSON(); 
     
-    // 3. Ініціалізуємо додаткові модулі
     try { initGlobalChatPersistence(); } catch (e) { console.error(e); }
     try { initThemeToggle(); } catch (e) { console.error(e); } 
     
-    // Ініціалізація системи коментарів (Хмарна)
     initMovieCommentsSystem();
     
-    // 4. Кнопка фільтрів
     const applyBtn = document.querySelector('.apply-filters-btn');
     if (applyBtn) {
         applyBtn.addEventListener('click', applyAllFilters);
     }
     
-    // 5. Вивід нікнейма
     const currentUser = sessionStorage.getItem('secureUser');
     console.log("Поточний користувач:", currentUser);
 });
