@@ -6,7 +6,7 @@
     <title>KinoHub - Заробіток монет</title>
     <link rel="stylesheet" href="s1.css">
     <style>
-        /* Стилі самого блоку заробітку (щоб він гарно виглядав у твоєму movie-container) */
+        /* Стилі самого блоку заробітку */
         .earn-hub {
             background: rgba(10, 15, 30, 0.85);
             padding: 35px;
@@ -60,7 +60,6 @@
             background: #ddd;
             color: #888;
         }
-        /* Підсвічування валюти при наведенні (твій запит) */
         .currency-item {
             text-decoration: none;
             color: inherit;
@@ -112,16 +111,8 @@
     <div class="movie-container">
         <div class="earn-hub">
             <h1 style="color: #ffd700; margin-top: 0;">💎 Заробіток монет</h1>
-            <p style="opacity: 0.8; margin-bottom: 30px;">Виконуй прості завдання та купуй круті аватарки!</p>
+            <p style="opacity: 0.8; margin-bottom: 30px;">Виконуй завдання та купуй круті аватарки!</p>
             
-            <div class="task-card">
-                <div style="text-align: left;">
-                    <h3 style="margin: 0 0 5px 0;">🍿 Перегляд реклами</h3>
-                    <small style="opacity: 0.6;">Подивись коротке відео й отримай +50 монет</small>
-                </div>
-                <button class="earn-btn" onclick="watchAd(this)">Дивитись</button>
-            </div>
-
             <div class="task-card">
                 <div style="text-align: left;">
                     <h3 style="margin: 0 0 5px 0;">🎁 Щоденний бонус</h3>
@@ -143,88 +134,51 @@
                 <button id="close-chat-btn" class="header-icon-btn close-btn-chat" title="Закрити чат">&times;</button>
             </div>
         </div>
-        <div class="chat-messages" id="chat-messages">
-            </div>
+        <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
             <input type="text" id="chat-input" placeholder="Напиши запит...">
             <button id="send-btn">➤</button>
         </div>
     </div>
 
-    <script>
-        if (!document.getElementById('carousel')) {
-            const d = document.createElement('div'); d.id = 'carousel'; d.style.display = 'none'; document.body.appendChild(d);
-        }
-        if (!document.getElementById('movie-list')) {
-            const d = document.createElement('div'); d.id = 'movie-list'; d.style.display = 'none'; document.body.appendChild(d);
-        }
-        if (!document.getElementById('pagination-container')) {
-            const d = document.createElement('div'); d.id = 'pagination-container'; d.style.display = 'none'; document.body.appendChild(d);
-        }
-    </script>
-
     <script src="s1.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-    checkDailyCooldown();
-});
+            checkDailyCooldown();
+        });
 
-// Функція сповіщення
-function showStatus(text) {
-    const msg = document.getElementById('status-msg');
-    if (msg) {
-        msg.innerText = text;
-        setTimeout(() => msg.innerText = '', 4000);
-    }
-}
-
-// Реклама (асинхронна версія)
-async function watchAd(btn) {
-    btn.disabled = true;
-    let time = 15;
-    const oldText = btn.innerText;
-
-    const timer = setInterval(async () => {
-        btn.innerText = `Чекайте ${time}с`;
-        time--;
-
-        if (time < 0) {
-            clearInterval(timer);
-            
-            // Зберігаємо в хмару
-            await addCoinsToCloud(50); 
-            
-            btn.innerText = oldText;
-            btn.disabled = false;
-            showStatus('✅ Отримано +50 монет!');
+        // Функція сповіщення
+        function showStatus(text) {
+            const msg = document.getElementById('status-msg');
+            if (msg) {
+                msg.innerText = text;
+                setTimeout(() => msg.innerText = '', 4000);
+            }
         }
-    }, 1000);
-}
 
-// Щоденний бонус (асинхронна версія)
-async function claimDailyBonus(btn) {
-    // Зберігаємо в хмару
-    await addCoinsToCloud(100); 
-    
-    localStorage.setItem('lastDailyBonusTime', Date.now());
-    btn.disabled = true;
-    btn.innerText = 'Отримано';
-    showStatus('🎉 Щоденний бонус 100 монет зараховано!');
-}
-
-// Перевірка часу для бонусу
-function checkDailyCooldown() {
-    const lastClaim = localStorage.getItem('lastDailyBonusTime');
-    const btn = document.getElementById('daily-btn');
-    if (lastClaim && (Date.now() - lastClaim < 86400000)) {
-        if (btn) {
+        // Щоденний бонус
+        async function claimDailyBonus(btn) {
+            // Зберігаємо в хмару (addCoinsToCloud має бути визначена в s1.js)
+            await addCoinsToCloud(100); 
+            
+            localStorage.setItem('lastDailyBonusTime', Date.now());
             btn.disabled = true;
             btn.innerText = 'Отримано';
+            showStatus('🎉 Щоденний бонус 100 монет зараховано!');
         }
-    }
-}
+
+        // Перевірка часу для бонусу
+        function checkDailyCooldown() {
+            const lastClaim = localStorage.getItem('lastDailyBonusTime');
+            const btn = document.getElementById('daily-btn');
+            if (lastClaim && (Date.now() - lastClaim < 86400000)) {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = 'Отримано';
+                }
+            }
+        }
     </script>
-    <script src="s1.js"></script>
 </body>
 </html>
