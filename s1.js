@@ -536,30 +536,33 @@ async function sendMessage() {
         // РОЗУМНА ФІЛЬТРАЦІЯ НА БОЗІ ФРОНТЕНДУ (БЕЗПЕЧНИЙ РЕЗЕРВ)
         // ===========================================================
         if (useFilter) {
-            let keyword = text.toLowerCase(); // За замовчуванням ключове слово - це запит користувача
+            // Розбиваємо запит юзера на окремі слова і відкидаємо короткі (менше 3 букв)
+            let searchWords = text.toLowerCase().split(/\s+/).filter(word => word.length > 2);
             
-            // Якщо сервер надіслав конкретні ID фільмів (ідеальний варіант)
+            // Якщо сервер надіслав конкретні ID фільмів
             if (data.action === 'filter' && data.movieIds && data.movieIds.length > 0) {
                 const targetIds = data.movieIds.map(String);
                 filteredMovies = moviesDatabase.filter(m => targetIds.includes(String(m.id)));
             } 
-            // Якщо сервер надіслав ключове слово для фільтрації
+            // Якщо сервер надіслав конкретне слово для фільтрації
             else if (data.action === 'filter' && data.query) {
-                keyword = data.query.toLowerCase();
+                let keyword = data.query.toLowerCase();
                 filteredMovies = moviesDatabase.filter(m => 
                     (m.title && m.title.toLowerCase().includes(keyword)) ||
                     (m.genre && m.genre.toLowerCase().includes(keyword)) ||
                     (m.year && String(m.year).includes(keyword))
                 );
             } 
-            // ЯКЩО СЕРВЕР ПРОМОВЧАВ: Наш локальний пошук рятує ситуацію!
+            // СУПЕР-ПОШУК: якщо сервер промовчав, шукаємо по кожному слову із запиту юзера
             else {
                 filteredMovies = moviesDatabase.filter(m => {
-                    const titleMatch = m.title && m.title.toLowerCase().includes(keyword);
-                    const genreMatch = m.genre && m.genre.toLowerCase().includes(keyword);
-                    const yearMatch = m.year && String(m.year).includes(keyword);
-                    const descMatch = m.desc && m.desc.toLowerCase().includes(keyword);
-                    return titleMatch || genreMatch || yearMatch || descMatch;
+                    // Перевіряємо, чи ХОЧА Б ОДНЕ слово з запиту є в назві, жанрі або році
+                    return searchWords.some(word => {
+                        const titleMatch = m.title && m.title.toLowerCase().includes(word);
+                        const genreMatch = m.genre && m.genre.toLowerCase().includes(word);
+                        const yearMatch = m.year && String(m.year).includes(word);
+                        return titleMatch || genreMatch || yearMatch;
+                    });
                 });
             }
             
