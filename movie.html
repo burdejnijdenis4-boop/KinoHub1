@@ -142,38 +142,41 @@
         window.currentMovieData = null; 
         let movieId = "";
 
-        // === НОВА ФУНКЦІЯ: ЛІЧИЛЬНИК ПЕРЕГЛЯДІВ ===
-        async function incrementMovieViews(currentMovieId) {
-            if (sessionStorage.getItem(`viewed_movie_${currentMovieId}`)) return;
+       // === ГЛОБАЛЬНИЙ ЛІЧИЛЬНИК ПЕРЕГЛЯДІВ ===
+async function incrementMovieViews(currentMovieId) {
+    try {
+        // 1. Отримуємо актуальну базу даних
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${MOVIES_BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': CLOUD_API_KEY, 'Cache-Control': 'no-cache' }
+        });
+        const data = await response.json();
+        let movies = data.record.movies || data.record;
 
-            try {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${MOVIES_BIN_ID}/latest`, {
-                    headers: { 'X-Master-Key': CLOUD_API_KEY, 'Cache-Control': 'no-cache' }
-                });
-                const data = await response.json();
-                let movies = data.record.movies || data.record;
+        // 2. Знаходимо індекс фільму
+        let movieIndex = movies.findIndex(m => String(m.id) === String(currentMovieId));
+        
+        if (movieIndex !== -1) {
+            // 3. Збільшуємо перегляди на 1
+            movies[movieIndex].views = (parseInt(movies[movieIndex].views) || 0) + 1;
 
-                let movieIndex = movies.findIndex(m => String(m.id) === String(currentMovieId));
-                
-                if (movieIndex !== -1) {
-                    movies[movieIndex].views = (parseInt(movies[movieIndex].views) || 0) + 1;
+            // 4. Оновлюємо дані у JSONBin
+            await fetch(`https://api.jsonbin.io/v3/b/${MOVIES_BIN_ID}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': CLOUD_API_KEY 
+                },
+                body: JSON.stringify(movies)
+            });
 
-                    await fetch(`https://api.jsonbin.io/v3/b/${MOVIES_BIN_ID}`, {
-                        method: 'PUT',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'X-Master-Key': CLOUD_API_KEY 
-                        },
-                        body: JSON.stringify(movies)
-                    });
-
-                    sessionStorage.setItem(`viewed_movie_${currentMovieId}`, 'true');
-                    console.log(`+1 перегляд для фільму ${currentMovieId}`);
-                }
-            } catch (err) {
-                console.error("Помилка лічильника переглядів:", err);
-            }
+            // 5. Оновлюємо число на екрані
+            document.getElementById('views-count').innerText = movies[movieIndex].views;
+            console.log(`Перегляд зараховано! Загалом: ${movies[movieIndex].views}`);
         }
+    } catch (err) {
+        console.error("Помилка при оновленні переглядів:", err);
+    }
+}
 
         // === 1. ГОЛОВНА ФУНКЦІЯ ЗАВАНТАЖЕННЯ ===
         async function initMoviePage() {
