@@ -1,13 +1,44 @@
 // ====================================================================
-// 1. НАЛАШТУВАННЯ ХМАРИ (JSONBin.io)
+// 1. ГЛОБАЛЬНІ ЗМІННІ ТА НАЛАШТУВАННЯ ХМАРИ (JSONBin.io)
 // ====================================================================
+let moviesDatabase = []; // Сюди прилетять всі фільми з хмари
+let filteredMovies = []; // Сюди будуть падати відфільтровані
+let currentPage = 1;
+
 const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq'; 
 const USERS_BIN_ID = '6a2da741da38895dfebb4bcf';  
 const MOVIES_BIN_ID = '6a24577af5f4af5e29c32cf6';
 const COMMENTS_BIN_ID = '6a2f2a5ef5f4af5e29f1fa87'; 
-let filteredMovies = []; // Це твоя "коробка", в яку ми кладемо результат
 
-// Функція для отримання даних користувачів з хмари
+// ====================================================================
+// ФУНКЦІЯ ЗАВАНТАЖЕННЯ ФІЛЬМІВ (Оновлена, чекає на дані)
+// ====================================================================
+async function loadMoviesFromJSON() {
+    try {
+        console.log("⏳ Завантажую базу фільмів...");
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${MOVIES_BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': CLOUD_API_KEY, 'Cache-Control': 'no-cache' }
+        });
+        const result = await response.json();
+        
+        // Записуємо отримані дані в глобальні змінні
+        moviesDatabase = result.record || []; 
+        filteredMovies = [...moviesDatabase]; 
+        
+        console.log(`✅ База завантажена! Фільмів знайдено: ${moviesDatabase.length}`);
+        
+        // Відмальовуємо фільми ТІЛЬКИ після завантаження бази
+        if (typeof renderKinokradList === 'function') {
+            renderKinokradList();
+        }
+    } catch (err) {
+        console.error("❌ Помилка завантаження бази фільмів:", err);
+    }
+}
+
+// ====================================================================
+// ЗАВАНТАЖЕННЯ ТА ЗБЕРЕЖЕННЯ КОРИСТУВАЧІВ
+// ====================================================================
 async function loadUsersFromCloud() {
     try {
         const response = await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}/latest`, {
@@ -21,7 +52,6 @@ async function loadUsersFromCloud() {
     }
 }
 
-// Функція для збереження даних користувачів у хмару
 async function saveUsersToCloud(data) {
     try {
         await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}`, {
