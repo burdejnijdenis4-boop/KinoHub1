@@ -12,10 +12,9 @@ const COMMENTS_BIN_ID = '6a2f2a5ef5f4af5e29f1fa87';
 let filteredMovies = []; // Це твоя "коробка", в яку ми кладемо результат
 
 // Функція для отримання даних користувачів з хмари
-async function loadMoviesFromJSON() {
+async function loadUsersFromCloud() {
     try {
-        console.log("⏳ Завантажую базу фільмів...");
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${MOVIES_BIN_ID}/latest`, {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${USERS_BIN_ID}/latest`, {
             headers: { 'X-Master-Key': CLOUD_API_KEY, 'Cache-Control': 'no-cache' }
         });
         const result = await response.json();
