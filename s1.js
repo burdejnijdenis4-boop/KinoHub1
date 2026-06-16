@@ -509,7 +509,7 @@ async function sendMessage() {
 
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'bot-message';
-    loadingDiv.innerText = useFilter ? "⏳ Шукаю фільми у базі..." : "⏳ Друкує...";
+    loadingDiv.innerText = useFilter ? "⏳ Шукаю фільми у нашій базі..." : "⏳ Друкує...";
     chatMessages.appendChild(loadingDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -527,51 +527,62 @@ async function sendMessage() {
 
         const botDiv = document.createElement('div');
         botDiv.className = 'bot-message';
-        botDiv.innerText = data.reply;
-        chatMessages.appendChild(botDiv);
-
-        saveChatToLocalStorage('bot', data.reply);
 
         // ===========================================================
-        // РОЗУМНА ФІЛЬТРАЦІЯ НА БОЗІ ФРОНТЕНДУ (БЕЗПЕЧНИЙ РЕЗЕРВ)
+        // СУПЕР-ПОШУК: ІГНОРУЄМО ЧУЖІ ID І ШУКАЄМО ПО СЛОВАХ
         // ===========================================================
         if (useFilter) {
-            // Розбиваємо запит юзера на окремі слова і відкидаємо короткі (менше 3 букв)
-            let searchWords = text.toLowerCase().split(/\s+/).filter(word => word.length > 2);
-            
-            // Якщо сервер надіслав конкретні ID фільмів
-            if (data.action === 'filter' && data.movieIds && data.movieIds.length > 0) {
-                const targetIds = data.movieIds.map(String);
-                filteredMovies = moviesDatabase.filter(m => targetIds.includes(String(m.id)));
-            } 
-            // Якщо сервер надіслав конкретне слово для фільтрації
-            else if (data.action === 'filter' && data.query) {
-                let keyword = data.query.toLowerCase();
-                filteredMovies = moviesDatabase.filter(m => 
-                    (m.title && m.title.toLowerCase().includes(keyword)) ||
-                    (m.genre && m.genre.toLowerCase().includes(keyword)) ||
-                    (m.year && String(m.year).includes(keyword))
-                );
-            } 
-            // СУПЕР-ПОШУК: якщо сервер промовчав, шукаємо по кожному слову із запиту юзера
-            else {
-                filteredMovies = moviesDatabase.filter(m => {
-                    // Перевіряємо, чи ХОЧА Б ОДНЕ слово з запиту є в назві, жанрі або році
-                    return searchWords.some(word => {
-                        const titleMatch = m.title && m.title.toLowerCase().includes(word);
-                        const genreMatch = m.genre && m.genre.toLowerCase().includes(word);
-                        const yearMatch = m.year && String(m.year).includes(word);
-                        return titleMatch || genreMatch || yearMatch;
-                    });
+            // Розбиваємо запит на слова і відрізаємо закінчення (комедію -> комеді)
+            let searchWords = text.toLowerCase().split(/\s+/)
+                .filter(word => word.length > 2)
+                .map(word => word.length > 4 ? word.slice(0, -2) : word);
+
+            // Шукаємо збіги у нашій базі (за жанром, роком або назвою)
+            let localMatches = moviesDatabase.filter(m => {
+                return searchWords.some(word => {
+                    const titleMatch = m.title && m.title.toLowerCase().includes(word);
+                    const genreMatch = m.genre && m.genre.toLowerCase().includes(word);
+                    const yearMatch = m.year && String(m.year).includes(word);
+                    return titleMatch || genreMatch || yearMatch;
                 });
+            });
+
+            if (localMatches.length > 0) {
+                // Якщо знайшли СВОЇ фільми
+                filteredMovies = localMatches;
+                botDiv.innerText = "Я перевірив наш каталог і знайшов фільми за твоїм запитом! Переглянь їх у списку нижче 👇";
+            } else {
+                // Якщо в базі пусто
+                filteredMovies = moviesDatabase; // Повертаємо всі фільми, щоб не було пустоти
+                botDiv.innerText = "На жаль, у нашій базі зараз немає таких фільмів. Але ось що я можу порадити загалом:\n\n" + data.reply;
             }
-            
+
             currentPage = 1; 
             renderKinokradList(); 
             
             const movieListSection = document.getElementById('movie-list');
             if (movieListSection) movieListSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        } else {
+            // Якщо розумний режим вимкнено, просто виводимо текст ШІ
+            botDiv.innerText = data.reply;
         }
+
+        chatMessages.appendChild(botDiv);
+        saveChatToLocalStorage('bot', botDiv.innerText);
+
+    } catch (error) {
+        console.error("Chat error:", error);
+        if (chatMessages.contains(loadingDiv)) chatMessages.removeChild(loadingDiv);
+        const errDiv = document.createElement('div');
+        errDiv.className = 'bot-message';
+        errDiv.style.color = 'red';
+        errDiv.innerText = "Упс... Зв'язок із сервером втрачено.";
+        chatMessages.appendChild(errDiv);
+    }
+    
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
         // ===========================================================
 
     } catch (error) {
