@@ -60,12 +60,10 @@ async function updateUI() {
 
     const userData = users[currentUser];
 
-    // Оновлюємо баланс
     if (balanceElement) {
         balanceElement.innerText = Number(userData.balance || 0).toLocaleString('uk-UA');
     }
 
-    // Оновлюємо аватарку
     if (avatarElement && userData.avatar) {
         if (userData.avatar.startsWith('#') || userData.avatar.startsWith('linear-gradient') || userData.avatar.startsWith('flag:')) {
             avatarElement.style.opacity = '0'; 
@@ -87,7 +85,7 @@ async function updateUI() {
 }
 
 // ====================================================================
-// 3. ФУНКЦІЯ ДЛЯ ЗАРОБІТКУ МОНЕТ (Для earn.html)
+// 3. ФУНКЦІЯ ДЛЯ ЗАРОБІТКУ МОНЕТ
 // ====================================================================
 async function addCoinsToCloud(amountToAdd) {
     const currentUser = sessionStorage.getItem('secureUser');
@@ -164,7 +162,7 @@ async function buyItemFromShop(itemId, itemName, itemUrl, itemPrice) {
 }
 
 // ====================================================================
-// 5. ФУНКЦІЯ "ПЕРЕГЛЯНУТИ ПІЗНІШЕ" (WATCH LATER)
+// 5. ФУНКЦІЯ "ПЕРЕГЛЯНУТИ ПІЗНІШЕ"
 // ====================================================================
 async function toggleWatchLater(movieId, starElement) {
     const currentUser = sessionStorage.getItem('secureUser');
@@ -215,7 +213,7 @@ async function toggleWatchLater(movieId, starElement) {
 }
 
 // ====================================================================
-// 6. ЗАВАНТАЖЕННЯ ФІЛЬМІВ З ХМАРИ ТА РЕНДЕР КАТАЛОГУ
+// 6. ЗАВАНТАЖЕННЯ ФІЛЬМІВ З ХМАРИ ТА РЕНДЕР
 // ====================================================================
 let moviesDatabase = []; 
 let currentPage = 1;
@@ -403,10 +401,7 @@ filterPills.forEach(pill => {
 });
 
 function applyAllFilters() {
-    if (typeof moviesDatabase === 'undefined' || !moviesDatabase) {
-        console.log("База ще не завантажена");
-        return; 
-    }
+    if (typeof moviesDatabase === 'undefined' || !moviesDatabase) return; 
     
     let filtered = [...moviesDatabase];
     const activePill = document.querySelector('.filter-pill.selected, .filter-tab.selected, .status-circle.selected');
@@ -444,7 +439,7 @@ function applyAllFilters() {
 }
 
 // ====================================================================
-// 9. AI ЧАТ-БОТ З РОЗУМНОЮ ЛОКАЛЬНОЮ ФІЛЬТРАЦІЄЮ
+// 9. AI ЧАТ-БОТ (ПОВНІСТЮ ОНОВЛЕНА СЕМАНТИЧНА ЛОГІКА)
 // ====================================================================
 let isAiFilterActive = false; 
 
@@ -509,7 +504,7 @@ async function sendMessage() {
 
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'bot-message';
-    loadingDiv.innerText = useFilter ? "⏳ Шукаю фільми у нашій базі..." : "⏳ Друкує...";
+    loadingDiv.innerText = useFilter ? "⏳ Аналізую запит і шукаю в базі..." : "⏳ Друкує...";
     chatMessages.appendChild(loadingDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -529,32 +524,41 @@ async function sendMessage() {
         botDiv.className = 'bot-message';
 
         // ===========================================================
-        // СУПЕР-ПОШУК: ІГНОРУЄМО ЧУЖІ ID І ШУКАЄМО ПО СЛОВАХ
+        // СЕМАНТИЧНИЙ ПОШУК ТА ЗАХИСТ ВІД ПУСТОТИ
         // ===========================================================
         if (useFilter) {
-            // Розбиваємо запит на слова і відрізаємо закінчення (комедію -> комеді)
-            let searchWords = text.toLowerCase().split(/\s+/)
-                .filter(word => word.length > 2)
-                .map(word => word.length > 4 ? word.slice(0, -2) : word);
+            // Крок 1. Перевіряємо, чи ШІ згадав у своїй відповіді НАЗВУ якогось нашого фільму
+            let aiMentionedMovies = moviesDatabase.filter(m => {
+                if (!m.title) return false;
+                // Злегка відрізаємо закінчення назви, щоб ловити відмінки (Хатіко, Месники -> Месник)
+                const titleRoot = m.title.length > 5 ? m.title.slice(0, -1).toLowerCase() : m.title.toLowerCase();
+                return data.reply.toLowerCase().includes(titleRoot);
+            });
 
-            // Шукаємо збіги у нашій базі (за жанром, роком або назвою)
-            let localMatches = moviesDatabase.filter(m => {
+            // Крок 2. Перевіряємо слова з запиту користувача в ОПИСІ, ЖАНРІ та НАЗВІ (Словниковий пошук)
+            let searchWords = text.toLowerCase().split(/[\s,.-]+/).filter(w => w.length > 3).map(w => w.slice(0, -1)); // комедія -> комеді
+            
+            let keywordMatches = moviesDatabase.filter(m => {
                 return searchWords.some(word => {
                     const titleMatch = m.title && m.title.toLowerCase().includes(word);
                     const genreMatch = m.genre && m.genre.toLowerCase().includes(word);
+                    const descMatch = m.desc && m.desc.toLowerCase().includes(word); // НОВЕ: Пошук по опису фільму!
                     const yearMatch = m.year && String(m.year).includes(word);
-                    return titleMatch || genreMatch || yearMatch;
+                    return titleMatch || genreMatch || descMatch || yearMatch;
                 });
             });
 
-            if (localMatches.length > 0) {
-                // Якщо знайшли СВОЇ фільми
-                filteredMovies = localMatches;
-                botDiv.innerText = "Я перевірив наш каталог і знайшов фільми за твоїм запитом! Переглянь їх у списку нижче 👇";
+            // Об'єднуємо обидва результати (якщо знайдено і так, і так)
+            let finalMatches = [...new Set([...aiMentionedMovies, ...keywordMatches])];
+
+            if (finalMatches.length > 0) {
+                // Якщо знайшли хоч щось
+                filteredMovies = finalMatches;
+                botDiv.innerText = "Я знайшов ідеальні фільми для тебе в нашому каталозі! Дивись нижче 👇\n\n" + data.reply;
             } else {
-                // Якщо в базі пусто
-                filteredMovies = moviesDatabase; // Повертаємо всі фільми, щоб не було пустоти
-                botDiv.innerText = "На жаль, у нашій базі зараз немає таких фільмів. Але ось що я можу порадити загалом:\n\n" + data.reply;
+                // Якщо НІЧОГО не знайдено — НЕ ОЧИЩАЄМО КАТАЛОГ!
+                filteredMovies = [...moviesDatabase]; // Залишаємо всі фільми як були
+                botDiv.innerText = "Я підібрав для тебе фільми, але їх поки що немає в нашому каталозі 😔. Зате я залишив список фільмів без змін!\n\nОсь моя порада:\n" + data.reply;
             }
 
             currentPage = 1; 
@@ -564,26 +568,11 @@ async function sendMessage() {
             if (movieListSection) movieListSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         } else {
-            // Якщо розумний режим вимкнено, просто виводимо текст ШІ
             botDiv.innerText = data.reply;
         }
 
         chatMessages.appendChild(botDiv);
         saveChatToLocalStorage('bot', botDiv.innerText);
-
-    } catch (error) {
-        console.error("Chat error:", error);
-        if (chatMessages.contains(loadingDiv)) chatMessages.removeChild(loadingDiv);
-        const errDiv = document.createElement('div');
-        errDiv.className = 'bot-message';
-        errDiv.style.color = 'red';
-        errDiv.innerText = "Упс... Зв'язок із сервером втрачено.";
-        chatMessages.appendChild(errDiv);
-    }
-    
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-        // ===========================================================
 
     } catch (error) {
         console.error("Chat error:", error);
