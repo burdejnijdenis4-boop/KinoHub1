@@ -1,10 +1,6 @@
 // ====================================================================
 // 1. НАЛАШТУВАННЯ ХМАРИ (JSONBin.io)
 // ====================================================================
-let moviesDatabase = []; // Сюди прилетять всі фільми з хмари
-let filteredMovies = []; // Сюди будуть падати відфільтровані
-let currentPage = 1;
-
 const CLOUD_API_KEY = '$2a$10$2XqOLrSsXthcKg925l/Sk.6PqMKbqGF/XzRytUJtSw29fDlVNGouq'; 
 const USERS_BIN_ID = '6a2da741da38895dfebb4bcf';  
 const MOVIES_BIN_ID = '6a24577af5f4af5e29c32cf6';
