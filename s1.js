@@ -412,6 +412,9 @@ function applyAllFilters() {
             filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
         } else if (value === "За рейтингом ★") {
             filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+        } else if (value === "Популярні") { 
+            // НОВИЙ РЯДОК: Сортуємо за кількістю переглядів (якщо поля немає, беремо 0)
+            filtered.sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0));
         } else if (value !== "Всі" && value !== "Популярні") { 
             filtered = filtered.filter(m => {
                 if (!m) return false;
