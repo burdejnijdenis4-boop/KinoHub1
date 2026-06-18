@@ -172,7 +172,7 @@
         function checkDailyCooldown() {
             const lastClaim = localStorage.getItem('lastDailyBonusTime');
             const btn = document.getElementById('daily-btn');
-            if (lastClaim && (Date.now() - lastClaim < 86400000)) {
+            if (lastClaim && (Date.now() - lastClaim < 54000000)) {
                 if (btn) {
                     btn.disabled = true;
                     btn.innerText = 'Отримано';
